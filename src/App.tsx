@@ -336,6 +336,7 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
   }
 ];
 const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
+const DEFAULT_GUTENBERG_ID = "1342";
 
 type ImportStatus = (typeof IMPORT_STATUSES)[number];
 
@@ -386,6 +387,9 @@ export default function App() {
   const [sessionStartMs, setSessionStartMs] = useState<number | null>(null);
   const [wikipediaLanguage, setWikipediaLanguage] = useState(
     DEFAULT_WIKIPEDIA_LANGUAGE
+  );
+  const [gutenbergBookId, setGutenbergBookId] = useState(
+    DEFAULT_GUTENBERG_ID
   );
   const [sampleStatus, setSampleStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -839,6 +843,10 @@ export default function App() {
     setWikipediaLanguage(event.target.value.trim().toLowerCase());
   };
 
+  const handleGutenbergIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGutenbergBookId(event.target.value.trim());
+  };
+
   const handleLoadWikipediaSample = async () => {
     if (!wikipediaLanguage) {
       return;
@@ -867,6 +875,39 @@ export default function App() {
       setSampleStatus("error");
       setSampleError(
         error instanceof Error ? error.message : "Sample load failed."
+      );
+    }
+  };
+
+  const handleLoadGutenbergSample = async () => {
+    const normalizedId = gutenbergBookId.replace(/[^0-9]/g, "");
+    if (!normalizedId) {
+      setSampleStatus("error");
+      setSampleError("Enter a valid Gutenberg book ID.");
+      return;
+    }
+
+    setSampleStatus("loading");
+    setSampleError(null);
+
+    try {
+      const proxyUrl = `https://r.jina.ai/http://www.gutenberg.org/cache/epub/${normalizedId}/pg${normalizedId}.txt`;
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error("Failed to load Gutenberg book.");
+      }
+
+      const text = await response.text();
+      if (!text.trim()) {
+        throw new Error("Gutenberg book was empty.");
+      }
+
+      handleSampleSelect(text);
+      setSampleStatus("success");
+    } catch (error) {
+      setSampleStatus("error");
+      setSampleError(
+        error instanceof Error ? error.message : "Gutenberg load failed."
       );
     }
   };
@@ -1001,6 +1042,24 @@ export default function App() {
               data-testid="wikipedia-sample"
             >
               Load Jellyfish (Wikipedia)
+            </button>
+          </div>
+          <div className="app__controls app__samples-row">
+            <input
+              className="app__input"
+              type="text"
+              value={gutenbergBookId}
+              onChange={handleGutenbergIdChange}
+              placeholder="Gutenberg book ID (e.g., 1342)"
+              data-testid="gutenberg-id"
+            />
+            <button
+              type="button"
+              className="app__button"
+              onClick={handleLoadGutenbergSample}
+              data-testid="gutenberg-sample"
+            >
+              Load Gutenberg book
             </button>
           </div>
           <div className="app__meta" data-testid="sample-status">

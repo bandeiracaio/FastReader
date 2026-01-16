@@ -301,6 +301,24 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("loads a Gutenberg book by ID", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "Gutenberg sample text."
+    }) as typeof fetch;
+
+    render(<App />);
+
+    fireEvent.change(screen.getByTestId("gutenberg-id"), {
+      target: { value: "1342" }
+    });
+    fireEvent.click(screen.getByTestId("gutenberg-sample"));
+
+    expect(
+      await screen.findByDisplayValue("Gutenberg sample text.")
+    ).toBeInTheDocument();
+  });
+
   it("auto-advances at selected WPM", () => {
     vi.useFakeTimers();
     render(<App />);

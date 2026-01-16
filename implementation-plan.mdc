@@ -567,6 +567,24 @@
 - Step 6 (Long read categories): Done
   - Maintained existing tests.
   - Ensured sample IDs remain stable.
+- Step 1 (Gutenberg loader): Done
+  - Added Gutenberg ID input and load button.
+  - Validated numeric book IDs.
+- Step 2 (Gutenberg loader): Done
+  - Added proxy fetch for Gutenberg text.
+  - Reused sample status and error handling.
+- Step 3 (Gutenberg loader): Done
+  - Added tests for Gutenberg book loading.
+  - Preserved existing sample tests.
+- Step 4 (Gutenberg loader): Done
+  - Kept UI layout consistent with sample panel.
+  - Maintained default Gutenberg ID.
+- Step 5 (Gutenberg loader): Done
+  - Preserved sample selection behavior.
+  - Avoided changes to import logic.
+- Step 6 (Gutenberg loader): Done
+  - Ensured compatibility with GitHub Pages.
+  - Kept sample status reporting intact.
 - Step 1 (App version badge): Done
   - Added a visible version label in the UI.
   - Positioned it at the top-left corner.
