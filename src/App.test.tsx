@@ -1,4 +1,11 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { extractEpubTextFromArrayBuffer } from "./lib/epubExtract";
@@ -301,6 +308,25 @@ describe("App", () => {
     expect(
       await screen.findByDisplayValue("Gutenberg sample text.")
     ).toBeInTheDocument();
+  });
+
+  it("allows selecting chapters after Gutenberg load", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () =>
+        "CHAPTER 1\nChapter one text.\nCHAPTER 2\nChapter two text."
+    }) as typeof fetch;
+
+    render(<App />);
+
+    fireEvent.click(screen.getByTestId("gutenberg-sample"));
+
+    const chapterSelect = await screen.findByTestId("chapter-select");
+    fireEvent.change(chapterSelect, { target: { value: "chapter-2" } });
+
+    await waitFor(() => {
+      expect(chapterSelect).toHaveValue("chapter-2");
+    });
   });
 
   it("auto-advances at selected WPM", () => {

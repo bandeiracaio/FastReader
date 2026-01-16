@@ -603,6 +603,24 @@
 - Step 6 (Gutenberg loader): Done
   - Ensured compatibility with GitHub Pages.
   - Kept sample status reporting intact.
+- Step 1 (Chapter selection): Done
+  - Added chapter parsing for loaded books.
+  - Stored chapter options in state.
+- Step 2 (Chapter selection): Done
+  - Added chapter selector UI.
+  - Supports full book or chapter view.
+- Step 3 (Chapter selection): Done
+  - Applied chapter selection to Gutenberg loads.
+  - Reset chapters on manual edits.
+- Step 4 (Chapter selection): Done
+  - Added test for chapter selection.
+  - Ensured Gutenberg path covered.
+- Step 5 (Chapter selection): Done
+  - Preserved sample status and errors.
+  - Kept layout consistent with samples.
+- Step 6 (Chapter selection): Done
+  - Maintained import and playback logic.
+  - Preserved existing sample entries.
 - Step 1 (Sample cleanup): Done
   - Removed the Wikipedia Jellyfish sample loader.
   - Kept Gutenberg loader intact.

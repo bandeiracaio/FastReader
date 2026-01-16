@@ -176,6 +176,11 @@ type SampleCategory = {
   description: string;
   samples: SampleSource[];
 };
+type ChapterOption = {
+  id: string;
+  label: string;
+  text: string;
+};
 const QUICK_DEMO_SENTENCE =
   "Focus on each word, keep a steady rhythm, and let your eyes stay relaxed as the words appear in sequence.";
 const QUICK_DEMO_REPEAT_COUNT = 50;
@@ -431,6 +436,29 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
 ];
 const DEFAULT_GUTENBERG_ID = "1342";
 
+const extractChapters = (text: string): ChapterOption[] => {
+  const matches = Array.from(
+    text.matchAll(/^\s*chapter\s+[^\n]+/gim)
+  );
+
+  if (matches.length < 2) {
+    return [];
+  }
+
+  return matches
+    .map((match, index) => {
+      const startIndex = match.index ?? 0;
+      const endIndex = matches[index + 1]?.index ?? text.length;
+      const chapterText = text.slice(startIndex, endIndex).trim();
+      return {
+        id: `chapter-${index + 1}`,
+        label: match[0].trim(),
+        text: chapterText
+      };
+    })
+    .filter((chapter) => chapter.text.length > 0);
+};
+
 type ImportStatus = (typeof IMPORT_STATUSES)[number];
 
 type ImportedFileMetadata = {
@@ -481,6 +509,9 @@ export default function App() {
   const [gutenbergBookId, setGutenbergBookId] = useState(
     DEFAULT_GUTENBERG_ID
   );
+  const [loadedSampleText, setLoadedSampleText] = useState<string | null>(null);
+  const [chapterOptions, setChapterOptions] = useState<ChapterOption[]>([]);
+  const [selectedChapterId, setSelectedChapterId] = useState("full");
   const [sampleStatus, setSampleStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -898,7 +929,38 @@ export default function App() {
     setImportedFile(null);
     setImportStatus("idle");
     setFileError(null);
+    setLoadedSampleText(text);
+    setChapterOptions(extractChapters(text));
+    setSelectedChapterId("full");
   };
+
+  const handleChapterSelect = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedChapterId(event.target.value);
+  };
+
+  useEffect(() => {
+    if (!loadedSampleText) {
+      return;
+    }
+
+    if (selectedChapterId === "full") {
+      setInputText(loadedSampleText);
+      return;
+    }
+
+    const sourceChapters =
+      chapterOptions.length > 0
+        ? chapterOptions
+        : extractChapters(loadedSampleText);
+    const selectedChapter = sourceChapters.find(
+      (chapter) => chapter.id === selectedChapterId
+    );
+    if (selectedChapter) {
+      setInputText(selectedChapter.text);
+    }
+  }, [chapterOptions, loadedSampleText, selectedChapterId]);
 
   const handleSampleSourceSelect = async (sample: SampleSource) => {
     setSampleStatus("loading");
@@ -961,6 +1023,15 @@ export default function App() {
       setSampleError(
         error instanceof Error ? error.message : "Gutenberg load failed."
       );
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputText(event.target.value);
+    if (loadedSampleText) {
+      setLoadedSampleText(null);
+      setChapterOptions([]);
+      setSelectedChapterId("full");
     }
   };
 
@@ -1096,6 +1167,27 @@ export default function App() {
               Load Gutenberg book
             </button>
           </div>
+          {chapterOptions.length > 0 ? (
+            <div className="app__controls app__samples-row">
+              <label className="app__label" htmlFor="chapterSelect">
+                Chapter selection
+              </label>
+              <select
+                id="chapterSelect"
+                className="app__select"
+                value={selectedChapterId}
+                onChange={handleChapterSelect}
+                data-testid="chapter-select"
+              >
+                <option value="full">Full book</option>
+                {chapterOptions.map((chapter) => (
+                  <option key={chapter.id} value={chapter.id}>
+                    {chapter.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
           <div className="app__meta" data-testid="sample-status">
             Sample status: {sampleStatus}
           </div>
@@ -1279,7 +1371,7 @@ export default function App() {
           id="inputText"
           className="app__textarea"
           value={inputText}
-          onChange={(event) => setInputText(event.target.value)}
+          onChange={handleInputChange}
           rows={10}
           disabled={isImportLocked}
         />
