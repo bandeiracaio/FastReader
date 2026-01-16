@@ -119,7 +119,7 @@ const THEME_PRESETS: ThemePreset[] = [
 const SPEED_TEST_TEXT =
   "Reading speed tests help you find a comfortable words per minute pace.";
 const DEFAULT_WPM = 300;
-const APP_VERSION = "0.1.0";
+const APP_VERSION = __APP_VERSION__;
 type SampleText = {
   id: string;
   label: string;

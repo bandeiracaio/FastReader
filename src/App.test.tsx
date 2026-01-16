@@ -55,7 +55,10 @@ describe("App", () => {
   it("shows the app version", () => {
     render(<App />);
 
-    expect(screen.getByTestId("app-version")).toHaveTextContent("v0.1.0");
+    const expectedVersion = process.env.npm_package_version ?? "0.1.0";
+    expect(screen.getByTestId("app-version")).toHaveTextContent(
+      `v${expectedVersion}`
+    );
   });
 
   it("steps forward and back through words", () => {

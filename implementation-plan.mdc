@@ -531,3 +531,21 @@
 - Step 6 (App version badge): Done
   - Maintained accessibility labels.
   - Confirmed top-left placement.
+- Step 1 (Version from package): Done
+  - Wired app version to npm package version.
+  - Added Vite define for version constant.
+- Step 2 (Version from package): Done
+  - Declared version constant for TypeScript.
+  - Updated version test expectation.
+- Step 3 (Version from package): Done
+  - Kept version label rendering unchanged.
+  - Preserved styling and placement.
+- Step 4 (Version from package): Done
+  - Ensured build-time version injection.
+  - Maintained default fallback in tests.
+- Step 5 (Version from package): Done
+  - Avoided impact to theme and samples logic.
+  - Preserved focus mode behavior.
+- Step 6 (Version from package): Done
+  - Confirmed compatibility with Vite config.
+  - Kept app header intact.
