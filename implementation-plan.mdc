@@ -531,6 +531,24 @@
 - Step 6 (Offline long samples): Done
   - Stored long reads in public samples folder.
   - Maintained author/title labels.
+- Step 1 (Russian long reads): Done
+  - Added classic Russian literature titles.
+  - Downloaded public-domain texts locally.
+- Step 2 (Russian long reads): Done
+  - Updated sample list with local URLs.
+  - Kept author labels for each title.
+- Step 3 (Russian long reads): Done
+  - Preserved existing sample loader behavior.
+  - Maintained BASE_URL resolution.
+- Step 4 (Russian long reads): Done
+  - Kept tests unchanged.
+  - Ensured sample UI layout consistency.
+- Step 5 (Russian long reads): Done
+  - Preserved playback and import logic.
+  - Maintained focus mode visibility rules.
+- Step 6 (Russian long reads): Done
+  - Stored new texts under public samples.
+  - Kept long reads grouped together.
 - Step 1 (App version badge): Done
   - Added a visible version label in the UI.
   - Positioned it at the top-left corner.

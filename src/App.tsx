@@ -204,6 +204,42 @@ const LONG_SAMPLE_SOURCES: SampleSource[] = [
     label: "The War of the Worlds",
     description: "H. G. Wells",
     url: "samples/war-of-worlds.txt"
+  },
+  {
+    id: "war-and-peace",
+    label: "War and Peace",
+    description: "Leo Tolstoy",
+    url: "samples/war-and-peace.txt"
+  },
+  {
+    id: "anna-karenina",
+    label: "Anna Karenina",
+    description: "Leo Tolstoy",
+    url: "samples/anna-karenina.txt"
+  },
+  {
+    id: "crime-and-punishment",
+    label: "Crime and Punishment",
+    description: "Fyodor Dostoevsky",
+    url: "samples/crime-and-punishment.txt"
+  },
+  {
+    id: "brothers-karamazov",
+    label: "The Brothers Karamazov",
+    description: "Fyodor Dostoevsky",
+    url: "samples/brothers-karamazov.txt"
+  },
+  {
+    id: "dead-souls",
+    label: "Dead Souls",
+    description: "Nikolai Gogol",
+    url: "samples/dead-souls.txt"
+  },
+  {
+    id: "fathers-and-sons",
+    label: "Fathers and Sons",
+    description: "Ivan Turgenev",
+    url: "samples/fathers-and-sons.txt"
   }
 ];
 const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
