@@ -137,17 +137,18 @@ type SampleCategory = {
   description: string;
   samples: SampleSource[];
 };
+const QUICK_DEMO_SENTENCE =
+  "Focus on each word, keep a steady rhythm, and let your eyes stay relaxed as the words appear in sequence.";
+const QUICK_DEMO_REPEAT_COUNT = 50;
+const QUICK_DEMO_TEXT = Array.from(
+  { length: QUICK_DEMO_REPEAT_COUNT },
+  () => QUICK_DEMO_SENTENCE
+).join(" ");
 const SAMPLE_TEXTS: SampleText[] = [
   {
     id: "quick-demo",
     label: "Quick demo",
-    text: "Speed reading works best with short bursts of focused attention."
-  },
-  {
-    id: "productivity",
-    label: "Productivity tip",
-    text:
-      "Try increasing your pace gradually while maintaining comprehension and comfort."
+    text: QUICK_DEMO_TEXT
   }
 ];
 const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
@@ -335,7 +336,6 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
     ]
   }
 ];
-const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
 const DEFAULT_GUTENBERG_ID = "1342";
 
 type ImportStatus = (typeof IMPORT_STATUSES)[number];
@@ -385,9 +385,6 @@ export default function App() {
   const [isWordFocusMode, setIsWordFocusMode] = useState(false);
   const [sessionElapsedMs, setSessionElapsedMs] = useState(0);
   const [sessionStartMs, setSessionStartMs] = useState<number | null>(null);
-  const [wikipediaLanguage, setWikipediaLanguage] = useState(
-    DEFAULT_WIKIPEDIA_LANGUAGE
-  );
   const [gutenbergBookId, setGutenbergBookId] = useState(
     DEFAULT_GUTENBERG_ID
   );
@@ -837,46 +834,8 @@ export default function App() {
     }
   };
 
-  const handleWikipediaLanguageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setWikipediaLanguage(event.target.value.trim().toLowerCase());
-  };
-
   const handleGutenbergIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGutenbergBookId(event.target.value.trim());
-  };
-
-  const handleLoadWikipediaSample = async () => {
-    if (!wikipediaLanguage) {
-      return;
-    }
-
-    setSampleStatus("loading");
-    setSampleError(null);
-
-    try {
-      const response = await fetch(
-        `https://${wikipediaLanguage}.wikipedia.org/api/rest_v1/page/summary/Jellyfish`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to load Wikipedia sample.");
-      }
-
-      const data = (await response.json()) as { extract?: string };
-      if (!data.extract) {
-        throw new Error("No summary found for this language.");
-      }
-
-      handleSampleSelect(data.extract);
-      setSampleStatus("success");
-    } catch (error) {
-      setSampleStatus("error");
-      setSampleError(
-        error instanceof Error ? error.message : "Sample load failed."
-      );
-    }
   };
 
   const handleLoadGutenbergSample = async () => {
@@ -1026,24 +985,6 @@ export default function App() {
               </div>
             </div>
           ))}
-          <div className="app__controls app__samples-row">
-            <input
-              className="app__input"
-              type="text"
-              value={wikipediaLanguage}
-              onChange={handleWikipediaLanguageChange}
-              placeholder="Language code (e.g., en, es, pt)"
-              data-testid="wikipedia-language"
-            />
-            <button
-              type="button"
-              className="app__button"
-              onClick={handleLoadWikipediaSample}
-              data-testid="wikipedia-sample"
-            >
-              Load Jellyfish (Wikipedia)
-            </button>
-          </div>
           <div className="app__controls app__samples-row">
             <input
               className="app__input"

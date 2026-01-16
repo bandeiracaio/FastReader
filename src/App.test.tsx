@@ -270,22 +270,6 @@ describe("App", () => {
     expect(screen.getByTestId("speed-test-result")).toBeInTheDocument();
   });
 
-  it("loads the Wikipedia Jellyfish sample", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ extract: "Jellyfish are marine animals." })
-    }) as typeof fetch;
-
-    render(<App />);
-
-    fireEvent.click(screen.getByTestId("wikipedia-sample"));
-
-    await screen.findByText("Sample status: success");
-    expect(screen.getByLabelText("Input text")).toHaveValue(
-      "Jellyfish are marine animals."
-    );
-  });
-
   it("loads a long sample text", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,

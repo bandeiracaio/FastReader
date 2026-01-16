@@ -585,6 +585,24 @@
 - Step 6 (Gutenberg loader): Done
   - Ensured compatibility with GitHub Pages.
   - Kept sample status reporting intact.
+- Step 1 (Sample cleanup): Done
+  - Removed the Wikipedia Jellyfish sample loader.
+  - Kept Gutenberg loader intact.
+- Step 2 (Sample cleanup): Done
+  - Expanded quick demo to long-form text.
+  - Removed productivity tip sample.
+- Step 3 (Sample cleanup): Done
+  - Kept sample status and error handling.
+  - Preserved long read categories.
+- Step 4 (Sample cleanup): Done
+  - Removed Wikipedia sample test coverage.
+  - Kept Gutenberg and long read tests.
+- Step 5 (Sample cleanup): Done
+  - Kept UI layout consistent.
+  - Preserved focus mode visibility rules.
+- Step 6 (Sample cleanup): Done
+  - Maintained sample IDs for remaining entries.
+  - Preserved input and playback behavior.
 - Step 1 (App version badge): Done
   - Added a visible version label in the UI.
   - Positioned it at the top-left corner.
