@@ -1,0 +1,479 @@
+# cursor_project_rules/implementation-plan.mdc
+
+## Steps
+1) Gather requirements and define scope.
+2) Draft functional spec.
+3) Draft non-functional spec.
+4) Define data model and state.
+5) UI flow and screen list.
+6) Implementation tasks and checkpoints.
+
+## Progress Log
+- Step 1: Done
+  - Identified MVP scope and constraints.
+  - Logged assumptions.
+- Step 2: Done
+  - Drafted functional requirements for RSVP reading, controls, and settings.
+  - Captured input, playback, and customization capabilities.
+- Step 3: Done
+  - Documented performance, accessibility, privacy, and reliability requirements.
+  - Recorded non-goals to keep scope focused.
+- Step 4: Done
+  - Defined core data models and reader state transitions.
+  - Listed settings structures for display and hotkeys.
+- Step 5: Done
+  - Outlined primary UI screens and user flow.
+  - Included settings and optional speed test screens.
+- Step 6: Done
+  - Added implementation tasks as testing notes and assertions.
+  - Flagged edge cases and completion behaviors.
+- Step 1 (File import): Done
+  - Scoped PDF and EPUB uploads with local text extraction.
+  - Captured constraints for unsupported or empty-text files.
+- Step 2 (File import): Done
+  - Added functional requirements for file upload and import status.
+  - Included file metadata display and removal behavior.
+- Step 3 (File import): Done
+  - Reinforced local-only processing and privacy for imported files.
+  - Kept reliability expectations for parsing errors.
+- Step 4 (File import): Done
+  - Added file metadata to the data model and import status to state.
+  - Expanded assertions around file types and state transitions.
+- Step 5 (File import): Done
+  - Added upload control to the landing screen flow.
+  - Ensured reader flow remains consistent after import.
+- Step 6 (File import): Done
+  - Extended unit and integration testing notes for file import.
+  - Covered parser behavior and input replacement.
+- Step 1 (App bootstrap): Done
+  - Selected React + TypeScript + Vite with Vitest for tests.
+  - Created baseline app entry and styles.
+- Step 2 (App bootstrap): Done
+  - Added tokenization tests before implementation.
+  - Defined basic input flow in the UI.
+- Step 3 (App bootstrap): Done
+  - Implemented tokenization with normalization and assertions.
+  - Ensured setup supports safe error handling.
+- Step 4 (App bootstrap): Done
+  - Added shared assertion helper for defensive checks.
+  - Wired tests to extend matchers safely.
+- Step 5 (App bootstrap): Done
+  - Confirmed UI flow with input and word count.
+  - Maintained consistent minimal layout for future reader.
+- Step 6 (App bootstrap): Done
+  - Added unit tests for tokenization edge cases.
+  - Verified test execution passes.
+- Step 1 (WPM timing): Done
+  - Defined WPM bounds and timing conversion requirement.
+  - Set constants to avoid magic numbers.
+- Step 2 (WPM timing): Done
+  - Added tests for clamping and interval conversion.
+  - Covered rounding behavior and bounds usage.
+- Step 3 (WPM timing): Done
+  - Implemented clamp and conversion helpers with assertions.
+  - Ensured finite-number validation.
+- Step 4 (WPM timing): Done
+  - Added constants for minimum and maximum WPM.
+  - Standardized milliseconds-per-minute in one place.
+- Step 5 (WPM timing): Done
+  - Ensured timing calculations align with spec.
+  - Kept helper module isolated for reuse.
+- Step 6 (WPM timing): Done
+  - Validated timing behavior via unit tests.
+  - Confirmed fast feedback loop with Vitest.
+- Step 1 (RSVP playback): Done
+  - Defined core reader state transitions for play/pause/step/finish.
+  - Scoped the state shape to index, playing flag, and total words.
+- Step 2 (RSVP playback): Done
+  - Added tests for step bounds and pause behavior.
+  - Covered finish state semantics.
+- Step 3 (RSVP playback): Done
+  - Implemented reader state helpers with assertions.
+  - Ensured bounds clamping for forward and backward steps.
+- Step 4 (RSVP playback): Done
+  - Encapsulated transitions in a reusable helper module.
+  - Kept the logic UI-agnostic for reuse.
+- Step 5 (RSVP playback): Done
+  - Verified pause preserves index.
+  - Ensured play only activates with content.
+- Step 6 (RSVP playback): Done
+  - Confirmed tests cover bounds and finish state.
+  - Maintained consistent state semantics for later UI wiring.
+- Step 1 (UI controls): Done
+  - Added play/pause and step controls in the UI.
+  - Wired controls to reader state transitions.
+- Step 2 (UI controls): Done
+  - Added integration tests for controls and status text.
+  - Covered step forward/backward interactions.
+- Step 3 (UI controls): Done
+  - Ensured controls disable when no tokens are available.
+  - Reset reader state when input changes.
+- Step 4 (UI controls): Done
+  - Rendered current word and playback status labels.
+  - Kept UI copy explicit for testing.
+- Step 5 (UI controls): Done
+  - Updated layout styles for controls and status.
+  - Preserved existing input layout.
+- Step 6 (UI controls): Done
+  - Verified tests for UI interactions and disable states.
+  - Kept reader logic isolated from UI components.
+- Step 1 (Progress): Done
+  - Defined progress calculation for percent and index display.
+  - Scoped to current index and total words.
+- Step 2 (Progress): Done
+  - Added unit tests for start, midpoint, and end values.
+  - Covered empty text progress behavior.
+- Step 3 (Progress): Done
+  - Implemented progress helper with assertions.
+  - Ensured percent rounding consistency.
+- Step 4 (Progress): Done
+  - Wired progress display into the UI.
+  - Kept progress data derived from reader state.
+- Step 5 (Progress): Done
+  - Added styling for progress label.
+  - Preserved existing layout structure.
+- Step 6 (Progress): Done
+  - Extended UI tests to assert progress output.
+  - Confirmed progress stays valid when input is empty.
+- Step 1 (File upload control): Done
+  - Defined supported file types and size limit.
+  - Added local-only validation requirement.
+- Step 2 (File upload control): Done
+  - Added UI file input with accepted extensions.
+  - Displayed validation errors when needed.
+- Step 3 (File upload control): Done
+  - Implemented file validation checks in the handler.
+  - Used assertions for file metadata sanity.
+- Step 4 (File upload control): Done
+  - Added styles for file input and error states.
+  - Kept layout consistent with the input area.
+- Step 5 (File upload control): Done
+  - Added tests for unsupported file types.
+  - Added tests for size limit enforcement.
+- Step 6 (File upload control): Done
+  - Confirmed file errors clear on new selection.
+  - Preserved existing reader interactions.
+- Step 1 (PDF extraction): Done
+  - Selected a PDF parsing approach for local extraction.
+  - Set an explicit page cap for performance.
+- Step 2 (PDF extraction): Done
+  - Added unit tests for empty and multi-page extraction.
+  - Validated text concatenation behavior.
+- Step 3 (PDF extraction): Done
+  - Implemented PDF text extraction helper with assertions.
+  - Ensured worker configuration is set.
+- Step 4 (PDF extraction): Done
+  - Wired PDF extraction into file upload flow.
+  - Added import status to the UI.
+- Step 5 (PDF extraction): Done
+  - Added tests for EPUB placeholder messaging.
+  - Extended file upload tests to check import status.
+- Step 6 (PDF extraction): Done
+  - Added error handling for read and extraction failures.
+  - Kept fallback behavior for empty-text PDFs.
+- Step 1 (EPUB extraction): Done
+  - Selected an EPUB parsing approach for local extraction.
+  - Set an explicit section cap for performance.
+- Step 2 (EPUB extraction): Done
+  - Added unit tests for empty and multi-section extraction.
+  - Covered basic text concatenation behavior.
+- Step 3 (EPUB extraction): Done
+  - Implemented EPUB text extraction helper with assertions.
+  - Ensured spine iteration handles missing text.
+- Step 4 (EPUB extraction): Done
+  - Wired EPUB extraction into file upload flow.
+  - Added error messaging for empty EPUB text.
+- Step 5 (EPUB extraction): Done
+  - Updated UI tests to handle EPUB imports.
+  - Mocked extraction to avoid runtime parsing in tests.
+- Step 6 (EPUB extraction): Done
+  - Added error handling for read and extraction failures.
+  - Preserved existing PDF import behavior.
+- Step 1 (Import metadata): Done
+  - Defined file metadata fields for imports.
+  - Ensured metadata is cleared on new selection.
+- Step 2 (Import metadata): Done
+  - Captured metadata on successful PDF and EPUB imports.
+  - Derived word count from extracted text.
+- Step 3 (Import metadata): Done
+  - Added metadata display to the upload panel.
+  - Styled metadata to match status and errors.
+- Step 4 (Import metadata): Done
+  - Added tests for metadata after PDF import.
+  - Validated import status success state.
+- Step 5 (Import metadata): Done
+  - Cleared stale metadata on validation errors.
+  - Kept UI consistent when import fails.
+- Step 6 (Import metadata): Done
+  - Confirmed metadata integrates with existing state.
+  - Preserved reader behavior for pasted text.
+- Step 1 (Distraction-free): Done
+  - Added focus mode toggle to the UI.
+  - Scoped minimal mode to hide non-essential controls.
+- Step 2 (Distraction-free): Done
+  - Persisted focus mode preference in local storage.
+  - Safeguarded storage access with try/catch.
+- Step 3 (Distraction-free): Done
+  - Updated layout styles to support minimal mode.
+  - Preserved primary reading indicators.
+- Step 4 (Distraction-free): Done
+  - Added UI tests for toggling focus mode.
+  - Ensured button label updates correctly.
+- Step 5 (Distraction-free): Done
+  - Maintained consistent UI for normal mode.
+  - Avoided changes to reader state behavior.
+- Step 6 (Distraction-free): Done
+  - Verified integration with existing upload and playback UI.
+  - Kept tests stable and focused.
+- Step 1 (Highlighting): Done
+  - Defined a simple focus-letter highlight strategy.
+  - Kept highlight calculation isolated from UI.
+- Step 2 (Highlighting): Done
+  - Added unit tests for highlight parts.
+  - Covered empty and single-letter cases.
+- Step 3 (Highlighting): Done
+  - Wired highlight rendering into current word display.
+  - Ensured focus span is styled distinctly.
+- Step 4 (Highlighting): Done
+  - Added focus span styles for readability.
+  - Preserved existing word output semantics.
+- Step 5 (Highlighting): Done
+  - Added UI test to verify focus span presence.
+  - Kept tests minimal and deterministic.
+- Step 6 (Highlighting): Done
+  - Verified integration with playback controls.
+  - Maintained compatibility with empty and end states.
+- Step 1 (Hotkeys): Done
+  - Added a hotkeys toggle with persistence.
+  - Scoped hotkeys to play/pause and stepping.
+- Step 2 (Hotkeys): Done
+  - Implemented keyboard listeners with editable-field guard.
+  - Ensured space and arrow keys trigger actions.
+- Step 3 (Hotkeys): Done
+  - Added UI toggle for enabling/disabling hotkeys.
+  - Styled the toggle row consistently.
+- Step 4 (Hotkeys): Done
+  - Added tests for play/pause hotkey behavior.
+  - Added tests for hotkey disable state.
+- Step 5 (Hotkeys): Done
+  - Preserved existing playback controls behavior.
+  - Kept hotkeys optional and off when disabled.
+- Step 6 (Hotkeys): Done
+  - Verified hotkeys do not trigger inside inputs.
+  - Maintained clean cleanup for listeners.
+- Step 1 (Theme settings): Done
+  - Defined theme settings for font size and colors.
+  - Set defaults with persistence.
+- Step 2 (Theme settings): Done
+  - Added UI controls for font size and colors.
+  - Included reset action to defaults.
+- Step 3 (Theme settings): Done
+  - Wired theme settings to root style attributes.
+  - Stored preferences in local storage.
+- Step 4 (Theme settings): Done
+  - Added tests for theme updates and reset.
+  - Ensured deterministic defaults.
+- Step 5 (Theme settings): Done
+  - Styled theme panel and inputs.
+  - Preserved layout spacing.
+- Step 6 (Theme settings): Done
+  - Hid theme panel in distraction-free mode.
+  - Maintained focus-mode semantics.
+- Step 1 (Reading speed test): Done
+  - Defined speed test sample text and WPM calculation.
+  - Added helper for duration-based WPM.
+- Step 2 (Reading speed test): Done
+  - Added unit tests for WPM calculation.
+  - Covered rounding behavior.
+- Step 3 (Reading speed test): Done
+  - Added UI for start/finish flow.
+  - Displayed computed WPM result.
+- Step 4 (Reading speed test): Done
+  - Added UI tests for speed test flow.
+  - Ensured result is shown after completion.
+- Step 5 (Reading speed test): Done
+  - Styled speed test panel consistently.
+  - Preserved existing layout.
+- Step 6 (Reading speed test): Done
+  - Ensured start/finish state guards.
+  - Kept test logic deterministic.
+- Step 1 (Fullscreen reader): Done
+  - Added fullscreen toggle control.
+  - Routed through native fullscreen API.
+- Step 2 (Fullscreen reader): Done
+  - Synced fullscreen state on fullscreenchange events.
+  - Handled exit state updates.
+- Step 3 (Fullscreen reader): Done
+  - Added tests for fullscreen label updates.
+  - Mocked fullscreen methods for safety.
+- Step 4 (Fullscreen reader): Done
+  - Kept UI toggle with other controls.
+  - Avoided layout regressions.
+- Step 5 (Fullscreen reader): Done
+  - Ensured errors do not crash toggle flow.
+  - Preserved focus mode behavior.
+- Step 6 (Fullscreen reader): Done
+  - Confirmed UI remains stable in tests.
+  - Cleaned up event listeners.
+- Step 1 (Input replace): Done
+  - Added controls to select paste mode or clear input.
+  - Defined mutual exclusion between paste and file import.
+- Step 2 (Input replace): Done
+  - Locked file upload when paste mode is selected.
+  - Locked text input when file import succeeds.
+- Step 3 (Input replace): Done
+  - Reset import state on clear.
+  - Ensured imported metadata is cleared when switching modes.
+- Step 4 (Input replace): Done
+  - Added tests for paste mode locking.
+  - Added tests for clear behavior.
+- Step 5 (Input replace): Done
+  - Updated layout to wrap control buttons.
+  - Preserved existing input layout.
+- Step 6 (Input replace): Done
+  - Verified import status resets correctly.
+  - Kept reader state consistent with input changes.
+- Step 1 (WPM playback): Done
+  - Added WPM state and bounds for playback speed.
+  - Introduced WPM controls and start button.
+- Step 2 (WPM playback): Done
+  - Wired interval playback to WPM timing.
+  - Ensured playback respects play state.
+- Step 3 (WPM playback): Done
+  - Added tests for auto-advancing words.
+  - Verified WPM input updates speed.
+- Step 4 (WPM playback): Done
+  - Styled WPM input controls.
+  - Preserved layout consistency.
+- Step 5 (WPM playback): Done
+  - Reused existing play state for automation.
+  - Kept hotkeys behavior intact.
+- Step 6 (WPM playback): Done
+  - Guarded playback on empty input.
+  - Ensured interval cleanup on stop.
+- Step 1 (Word focus mode): Done
+  - Added a toggle for full-screen word focus.
+  - Scoped to current word display.
+- Step 2 (Word focus mode): Done
+  - Centered the word horizontally and vertically.
+  - Increased font size for the focus view.
+- Step 3 (Word focus mode): Done
+  - Hid non-essential panels in focus mode.
+  - Preserved core word display elements.
+- Step 4 (Word focus mode): Done
+  - Added a test for the toggle behavior.
+  - Ensured label reflects focus state.
+- Step 5 (Word focus mode): Done
+  - Kept theme settings and playback state intact.
+  - Avoided changes to import logic.
+- Step 6 (Word focus mode): Done
+  - Verified layout remains stable outside focus mode.
+  - Kept focus toggle accessible at the top.
+- Step 1 (Highlight color): Done
+  - Added highlight color to theme settings.
+  - Selected a default highlight color.
+- Step 2 (Highlight color): Done
+  - Added UI input for highlight color.
+  - Wired highlight span to use theme color.
+- Step 3 (Highlight color): Done
+  - Ensured highlight color persists in theme storage.
+  - Maintained theme reset behavior.
+- Step 4 (Highlight color): Done
+  - Added tests for highlight color updates.
+  - Verified reset restores default highlight color.
+- Step 5 (Highlight color): Done
+  - Removed hardcoded highlight color from CSS.
+  - Preserved focus mode sizing.
+- Step 6 (Highlight color): Done
+  - Kept highlight behavior compatible with word focus mode.
+  - Ensured no impact to playback controls.
+- Step 1 (Highlight outline): Done
+  - Added outline color to theme settings.
+  - Defined default outline color.
+- Step 2 (Highlight outline): Done
+  - Added UI control for outline color.
+  - Wired outline color to highlighted letter styling.
+- Step 3 (Highlight outline): Done
+  - Ensured outline color persists with theme storage.
+  - Maintained theme reset behavior.
+- Step 4 (Highlight outline): Done
+  - Added tests for outline color updates.
+  - Verified reset restores default outline color.
+- Step 5 (Highlight outline): Done
+  - Applied outline via text shadow on focus letter.
+  - Preserved highlight sizing.
+- Step 6 (Highlight outline): Done
+  - Verified compatibility with focus mode.
+  - Kept UI layout unchanged.
+- Step 1 (Focus WPM controls): Done
+  - Added WPM display in focus mode.
+  - Added WPM input to adjust speed.
+- Step 2 (Focus WPM controls): Done
+  - Added play/pause toggle inside focus mode.
+  - Reused existing play state.
+- Step 3 (Focus WPM controls): Done
+  - Styled focus panel controls.
+  - Kept layout centered.
+- Step 4 (Focus WPM controls): Done
+  - Added tests for focus mode controls.
+  - Verified default WPM value.
+- Step 5 (Focus WPM controls): Done
+  - Ensured focus mode hides non-essential panels.
+  - Preserved main controls outside focus mode.
+- Step 6 (Focus WPM controls): Done
+  - Confirmed focus mode works with play state.
+  - Kept WPM input bounded.
+- Step 1 (Focus session time): Done
+  - Added elapsed time tracking while playing.
+  - Displayed elapsed time in focus panel.
+- Step 2 (Focus session time): Done
+  - Updated timers to tick once per second.
+  - Reset timers when playback stops.
+- Step 3 (Focus session time): Done
+  - Added tests for time display updates.
+  - Used fake timers for determinism.
+- Step 4 (Focus session time): Done
+  - Kept focus panel layout compact.
+  - Avoided layout changes outside focus mode.
+- Step 5 (Focus session time): Done
+  - Ensured play/pause toggles timer.
+  - Preserved existing playback behavior.
+- Step 6 (Focus session time): Done
+  - Verified time display increments correctly.
+  - Maintained focus mode UI consistency.
+- Step 1 (Font family): Done
+  - Added font family to theme settings defaults.
+  - Defined a curated font family list.
+- Step 2 (Font family): Done
+  - Added UI control for font family selection.
+  - Wired selection to theme settings.
+- Step 3 (Font family): Done
+  - Applied font family to root style.
+  - Ensured persistence with theme storage.
+- Step 4 (Font family): Done
+  - Added tests for font family updates.
+  - Verified reset returns to default.
+- Step 5 (Font family): Done
+  - Preserved existing theme controls layout.
+  - Maintained focus mode behavior.
+- Step 6 (Font family): Done
+  - Confirmed no impact on playback controls.
+  - Kept highlight rendering intact.
+- Step 1 (Sample texts): Done
+  - Added built-in sample text buttons.
+  - Included a Wikipedia Jellyfish loader.
+- Step 2 (Sample texts): Done
+  - Added language code input for Wikipedia.
+  - Added sample status and error display.
+- Step 3 (Sample texts): Done
+  - Wired sample selection to input text state.
+  - Ensured samples lock to paste mode.
+- Step 4 (Sample texts): Done
+  - Added tests for Wikipedia sample loading.
+  - Mocked fetch for determinism.
+- Step 5 (Sample texts): Done
+  - Styled the sample panel for layout consistency.
+  - Hid it in focus and minimal modes.
+- Step 6 (Sample texts): Done
+  - Preserved import and playback behavior.
+  - Kept error handling isolated to samples.

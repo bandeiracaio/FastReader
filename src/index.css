@@ -1,0 +1,234 @@
+.app {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2937;
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.app__header h1 {
+  margin-bottom: 4px;
+}
+
+.app__section {
+  margin-top: 24px;
+}
+
+.app__speed-test {
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.app__samples {
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.app__samples-row {
+  margin-top: 12px;
+}
+
+.app__subtitle {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.app__text {
+  margin: 0 0 12px 0;
+}
+
+.app__theme {
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.app__theme-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.app__select,
+.app__color-input {
+  margin-top: 4px;
+}
+
+.app__select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+}
+
+.app__font-preview {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.app__wpm {
+  margin-top: 16px;
+}
+
+.app__input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: inherit;
+}
+
+.app__toggle {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.app__label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.app__textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.app__meta {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.app__upload {
+  margin-top: 16px;
+}
+
+.app__file-input {
+  display: block;
+  margin-top: 8px;
+}
+
+.app__error {
+  margin-top: 8px;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.app__import-status {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.app__file-meta {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.app__controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.app__button {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: inherit;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: inherit;
+}
+
+.app__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.app__status,
+.app__progress,
+.app__word {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.app__word-focus {
+  font-weight: 700;
+}
+
+.app--word-focus {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app--word-focus .app__section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.app--word-focus .app__word {
+  font-size: 64px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.app--word-focus .app__word-focus {
+  font-size: 72px;
+}
+
+.app--word-focus .app__textarea,
+.app--word-focus .app__upload,
+.app--word-focus .app__controls,
+.app--word-focus .app__meta,
+.app--word-focus .app__theme,
+.app--word-focus .app__speed-test,
+.app--word-focus .app__samples,
+.app--word-focus .app__wpm {
+  display: none;
+}
+
+.app__focus-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.app__focus-info {
+  font-weight: 600;
+}
+.app--minimal .app__textarea,
+.app--minimal .app__theme,
+.app--minimal .app__speed-test,
+.app--minimal .app__samples,
+.app--minimal .app__upload,
+.app--minimal .app__controls,
+.app--minimal .app__meta {
+  display: none;
+}
