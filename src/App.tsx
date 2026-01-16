@@ -521,6 +521,17 @@ export default function App() {
     return tokenizeText(inputText);
   }, [inputText]);
 
+  const maxLeadingLength = useMemo(() => {
+    if (tokens.length === 0) {
+      return 0;
+    }
+
+    return tokens.reduce((maxLength, token) => {
+      const parts = getHighlightParts(token);
+      return Math.max(maxLength, parts.leading.length);
+    }, 0);
+  }, [tokens]);
+
   const tokenCount = tokens.length;
   const hasTokens = tokenCount > 0;
   const progress = computeProgress(readerState.currentIndex, tokenCount);
@@ -1486,11 +1497,19 @@ export default function App() {
         <div className="app__progress" data-testid="progress-status">
           Progress: {progress.percent}% ({progress.currentIndex}/{progress.totalWords})
         </div>
-        <div className="app__word" data-testid="current-word">
+        <div
+          className="app__word"
+          data-testid="current-word"
+          style={{
+            ["--orp-leading-width" as string]: `${maxLeadingLength}ch`
+          }}
+        >
           {hasTokens ? (
             currentWord ? (
               <>
-                <span>{highlightedWord.leading}</span>
+                <span className="app__word-leading">
+                  {highlightedWord.leading}
+                </span>
                 <span
                   className="app__word-focus"
                   style={{
@@ -1500,7 +1519,9 @@ export default function App() {
                 >
                   {highlightedWord.focus}
                 </span>
-                <span>{highlightedWord.trailing}</span>
+                <span className="app__word-trailing">
+                  {highlightedWord.trailing}
+                </span>
               </>
             ) : (
               "End"
