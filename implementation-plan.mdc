@@ -567,6 +567,24 @@
 - Step 6 (Long read categories): Done
   - Maintained existing tests.
   - Ensured sample IDs remain stable.
+- Step 1 (More long reads): Done
+  - Added more Russian classics and collections.
+  - Added more socialist/communist texts.
+- Step 2 (More long reads): Done
+  - Downloaded new public-domain texts locally.
+  - Added local sample references.
+- Step 3 (More long reads): Done
+  - Added new theme presets.
+  - Kept theme swatches consistent.
+- Step 4 (More long reads): Done
+  - Preserved existing sample loader behavior.
+  - Kept UI layout consistent.
+- Step 5 (More long reads): Done
+  - Maintained sample status and errors.
+  - Preserved focus mode behavior.
+- Step 6 (More long reads): Done
+  - Kept test suite unchanged.
+  - Ensured category grouping remains intact.
 - Step 1 (Gutenberg loader): Done
   - Added Gutenberg ID input and load button.
   - Validated numeric book IDs.

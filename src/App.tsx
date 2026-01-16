@@ -114,6 +114,45 @@ const THEME_PRESETS: ThemePreset[] = [
       highlightOutlineColor: "#00b8d4"
     },
     swatches: ["#212121", "#00e5ff", "#00b8d4", "#eeeeee"]
+  },
+  {
+    id: "solarized-dark",
+    label: "Solarized Dark",
+    description: "Low-contrast dark scheme with warm accents.",
+    theme: {
+      fontFamily: "system-ui",
+      textColor: "#839496",
+      backgroundColor: "#002b36",
+      highlightColor: "#b58900",
+      highlightOutlineColor: "#cb4b16"
+    },
+    swatches: ["#002b36", "#839496", "#b58900", "#cb4b16"]
+  },
+  {
+    id: "dracula",
+    label: "Dracula",
+    description: "High-contrast dark palette with neon highlights.",
+    theme: {
+      fontFamily: "\"Trebuchet MS\", sans-serif",
+      textColor: "#f8f8f2",
+      backgroundColor: "#21222c",
+      highlightColor: "#815cd6",
+      highlightOutlineColor: "#de5735"
+    },
+    swatches: ["#21222c", "#f8f8f2", "#815cd6", "#de5735"]
+  },
+  {
+    id: "gruvbox-dark",
+    label: "Gruvbox Dark",
+    description: "Muted earth tones with classic contrast.",
+    theme: {
+      fontFamily: "\"Times New Roman\", serif",
+      textColor: "#ebdbb2",
+      backgroundColor: "#282828",
+      highlightColor: "#d79921",
+      highlightOutlineColor: "#cc241d"
+    },
+    swatches: ["#282828", "#ebdbb2", "#d79921", "#cc241d"]
   }
 ];
 const SPEED_TEST_TEXT =
@@ -295,6 +334,42 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
         label: "Fathers and Sons",
         description: "Ivan Turgenev",
         url: "samples/fathers-and-sons.txt"
+      },
+      {
+        id: "the-idiot",
+        label: "The Idiot",
+        description: "Fyodor Dostoevsky",
+        url: "samples/the-idiot.txt"
+      },
+      {
+        id: "notes-from-underground",
+        label: "Notes from Underground",
+        description: "Fyodor Dostoevsky",
+        url: "samples/notes-from-underground.txt"
+      },
+      {
+        id: "demons",
+        label: "Demons",
+        description: "Fyodor Dostoevsky",
+        url: "samples/demons.txt"
+      },
+      {
+        id: "house-of-the-dead",
+        label: "The House of the Dead",
+        description: "Fyodor Dostoevsky",
+        url: "samples/house-of-the-dead.txt"
+      },
+      {
+        id: "eugene-onegin",
+        label: "Eugene Onegin",
+        description: "Alexander Pushkin",
+        url: "samples/eugene-onegin.txt"
+      },
+      {
+        id: "chekhov-duel-stories",
+        label: "The Duel and Other Stories",
+        description: "Anton Chekhov",
+        url: "samples/chekhov-duel-stories.txt"
       }
     ]
   },
@@ -332,6 +407,24 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
         label: "Socialism: Utopian and Scientific",
         description: "Friedrich Engels",
         url: "samples/utopian-and-scientific.txt"
+      },
+      {
+        id: "working-class-england",
+        label: "The Condition of the Working Class in England",
+        description: "Friedrich Engels",
+        url: "samples/working-class-england.txt"
+      },
+      {
+        id: "soul-of-man-under-socialism",
+        label: "The Soul of Man Under Socialism",
+        description: "Oscar Wilde",
+        url: "samples/soul-of-man-under-socialism.txt"
+      },
+      {
+        id: "letter-to-american-workingmen",
+        label: "A Letter to American Workingmen",
+        description: "Vladimir Lenin",
+        url: "samples/letter-to-american-workingmen.txt"
       }
     ]
   }
