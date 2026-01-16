@@ -149,61 +149,61 @@ const LONG_SAMPLE_SOURCES: SampleSource[] = [
     id: "pride-and-prejudice",
     label: "Pride and Prejudice",
     description: "Jane Austen",
-    url: "https://www.gutenberg.org/cache/epub/1342/pg1342.txt"
+    url: "samples/pride-and-prejudice.txt"
   },
   {
     id: "moby-dick",
     label: "Moby-Dick",
     description: "Herman Melville",
-    url: "https://www.gutenberg.org/cache/epub/2701/pg2701.txt"
+    url: "samples/moby-dick.txt"
   },
   {
     id: "dracula",
     label: "Dracula",
     description: "Bram Stoker",
-    url: "https://www.gutenberg.org/cache/epub/345/pg345.txt"
+    url: "samples/dracula.txt"
   },
   {
     id: "frankenstein",
     label: "Frankenstein",
     description: "Mary Shelley",
-    url: "https://www.gutenberg.org/cache/epub/84/pg84.txt"
+    url: "samples/frankenstein.txt"
   },
   {
     id: "alice-wonderland",
     label: "Alice’s Adventures in Wonderland",
     description: "Lewis Carroll",
-    url: "https://www.gutenberg.org/cache/epub/11/pg11.txt"
+    url: "samples/alice-wonderland.txt"
   },
   {
     id: "sherlock-holmes",
     label: "The Adventures of Sherlock Holmes",
     description: "Arthur Conan Doyle",
-    url: "https://www.gutenberg.org/cache/epub/1661/pg1661.txt"
+    url: "samples/sherlock-holmes.txt"
   },
   {
     id: "tale-of-two-cities",
     label: "A Tale of Two Cities",
     description: "Charles Dickens",
-    url: "https://www.gutenberg.org/cache/epub/98/pg98.txt"
+    url: "samples/tale-of-two-cities.txt"
   },
   {
     id: "dorian-gray",
     label: "The Picture of Dorian Gray",
     description: "Oscar Wilde",
-    url: "https://www.gutenberg.org/cache/epub/174/pg174.txt"
+    url: "samples/dorian-gray.txt"
   },
   {
     id: "time-machine",
     label: "The Time Machine",
     description: "H. G. Wells",
-    url: "https://www.gutenberg.org/cache/epub/35/pg35.txt"
+    url: "samples/time-machine.txt"
   },
   {
     id: "war-of-worlds",
     label: "The War of the Worlds",
     description: "H. G. Wells",
-    url: "https://www.gutenberg.org/cache/epub/36/pg36.txt"
+    url: "samples/war-of-worlds.txt"
   }
 ];
 const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
@@ -682,7 +682,9 @@ export default function App() {
     setSampleError(null);
 
     try {
-      const response = await fetch(sample.url);
+      const baseUrl = new URL(import.meta.env.BASE_URL ?? "/", window.location.origin);
+      const sampleUrl = new URL(sample.url, baseUrl).toString();
+      const response = await fetch(sampleUrl);
       if (!response.ok) {
         throw new Error("Failed to load sample text.");
       }

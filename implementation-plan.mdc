@@ -513,6 +513,24 @@
 - Step 6 (Long sample texts): Done
   - Ensured theme panel layout unaffected.
   - Kept focus mode hiding rules consistent.
+- Step 1 (Offline long samples): Done
+  - Downloaded public-domain texts into public assets.
+  - Updated sample URLs to local paths.
+- Step 2 (Offline long samples): Done
+  - Resolved CORS by serving from same origin.
+  - Kept sample loader logic unchanged.
+- Step 3 (Offline long samples): Done
+  - Ensured BASE_URL usage for GitHub Pages.
+  - Preserved sample status/error handling.
+- Step 4 (Offline long samples): Done
+  - Kept existing tests unchanged.
+  - Verified compatibility with sample selection.
+- Step 5 (Offline long samples): Done
+  - Preserved import and playback logic.
+  - Maintained focus mode hiding rules.
+- Step 6 (Offline long samples): Done
+  - Stored long reads in public samples folder.
+  - Maintained author/title labels.
 - Step 1 (App version badge): Done
   - Added a visible version label in the UI.
   - Positioned it at the top-left corner.
