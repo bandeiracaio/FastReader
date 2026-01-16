@@ -52,6 +52,12 @@ describe("App", () => {
     expect(screen.getByText(`Words: ${expectedCount}`)).toBeInTheDocument();
   });
 
+  it("shows the app version", () => {
+    render(<App />);
+
+    expect(screen.getByTestId("app-version")).toHaveTextContent("v0.1.0");
+  });
+
   it("steps forward and back through words", () => {
     render(<App />);
 
@@ -234,6 +240,22 @@ describe("App", () => {
     );
   });
 
+  it("applies theme presets", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByTestId("theme-sunset-orange"));
+
+    expect(screen.getByTestId("font-family-select")).toHaveValue(
+      "Georgia, serif"
+    );
+    expect(screen.getByTestId("text-color-input")).toHaveValue("#3e2723");
+    expect(screen.getByTestId("background-color-input")).toHaveValue("#fff3e0");
+    expect(screen.getByTestId("highlight-color-input")).toHaveValue("#ff5722");
+    expect(screen.getByTestId("highlight-outline-color-input")).toHaveValue(
+      "#e64a19"
+    );
+  });
+
   it("runs the reading speed test", () => {
     vi.spyOn(Date, "now").mockReturnValueOnce(0).mockReturnValueOnce(60_000);
 
@@ -259,6 +281,21 @@ describe("App", () => {
     expect(screen.getByLabelText("Input text")).toHaveValue(
       "Jellyfish are marine animals."
     );
+  });
+
+  it("loads a long sample text", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "Long form public domain sample."
+    }) as typeof fetch;
+
+    render(<App />);
+
+    fireEvent.click(screen.getByTestId("sample-pride-and-prejudice"));
+
+    expect(
+      await screen.findByDisplayValue("Long form public domain sample.")
+    ).toBeInTheDocument();
   });
 
   it("auto-advances at selected WPM", () => {

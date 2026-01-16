@@ -477,3 +477,57 @@
 - Step 6 (Sample texts): Done
   - Preserved import and playback behavior.
   - Kept error handling isolated to samples.
+- Step 1 (Theme presets): Done
+  - Added preset themes with paired fonts.
+  - Stored palette colors for swatch previews.
+- Step 2 (Theme presets): Done
+  - Added a theme preset picker UI.
+  - Applied presets via theme settings storage.
+- Step 3 (Theme presets): Done
+  - Styled preset cards and swatches.
+  - Kept layout consistent with theme panel.
+- Step 4 (Theme presets): Done
+  - Added tests for preset application.
+  - Verified color inputs update.
+- Step 5 (Theme presets): Done
+  - Kept font size intact on preset apply.
+  - Ensured focus mode behavior remains unchanged.
+- Step 6 (Theme presets): Done
+  - Preserved manual color controls.
+  - Maintained existing theme reset behavior.
+- Step 1 (Long sample texts): Done
+  - Added public-domain long read sources.
+  - Included title and author labels.
+- Step 2 (Long sample texts): Done
+  - Added loader to fetch remote text samples.
+  - Reused sample status and error handling.
+- Step 3 (Long sample texts): Done
+  - Placed long reads in the sample panel.
+  - Kept small sample buttons intact.
+- Step 4 (Long sample texts): Done
+  - Added test for loading a long sample.
+  - Mocked fetch text response.
+- Step 5 (Long sample texts): Done
+  - Avoided changes to import and playback logic.
+  - Preserved sample status display.
+- Step 6 (Long sample texts): Done
+  - Ensured theme panel layout unaffected.
+  - Kept focus mode hiding rules consistent.
+- Step 1 (App version badge): Done
+  - Added a visible version label in the UI.
+  - Positioned it at the top-left corner.
+- Step 2 (App version badge): Done
+  - Added a test for version rendering.
+  - Kept the version constant centralized.
+- Step 3 (App version badge): Done
+  - Styled the version label for readability.
+  - Avoided overlap with main content.
+- Step 4 (App version badge): Done
+  - Preserved theme and focus mode behavior.
+  - Kept layout consistent with existing styles.
+- Step 5 (App version badge): Done
+  - Ensured no impact to playback controls.
+  - Kept sample panel intact.
+- Step 6 (App version badge): Done
+  - Maintained accessibility labels.
+  - Confirmed top-left placement.

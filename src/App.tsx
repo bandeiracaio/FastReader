@@ -41,10 +41,97 @@ const DEFAULT_THEME = {
   highlightColor: "#111827",
   highlightOutlineColor: "#000000"
 };
+type ThemeSettings = typeof DEFAULT_THEME;
+type ThemePreset = {
+  id: string;
+  label: string;
+  description: string;
+  theme: Omit<ThemeSettings, "fontSize">;
+  swatches: string[];
+};
+const THEME_PRESETS: ThemePreset[] = [
+  {
+    id: "midnight-blue",
+    label: "Midnight Blue",
+    description: "High-contrast dark mode with electric blue accents.",
+    theme: {
+      fontFamily: "system-ui",
+      textColor: "#ffffff",
+      backgroundColor: "#1a237e",
+      highlightColor: "#448aff",
+      highlightOutlineColor: "#2979ff"
+    },
+    swatches: ["#1a237e", "#448aff", "#2979ff", "#ffffff"]
+  },
+  {
+    id: "sunset-orange",
+    label: "Sunset Orange",
+    description: "Warm, bright palette for energetic reading sessions.",
+    theme: {
+      fontFamily: "Georgia, serif",
+      textColor: "#3e2723",
+      backgroundColor: "#fff3e0",
+      highlightColor: "#ff5722",
+      highlightOutlineColor: "#e64a19"
+    },
+    swatches: ["#fff3e0", "#ff5722", "#e64a19", "#3e2723"]
+  },
+  {
+    id: "digital-lavender",
+    label: "Digital Lavender",
+    description: "Soft lavender tones with a crisp, modern contrast.",
+    theme: {
+      fontFamily: "\"Trebuchet MS\", sans-serif",
+      textColor: "#4a148c",
+      backgroundColor: "#fff0f6",
+      highlightColor: "#b39ddb",
+      highlightOutlineColor: "#9575cd"
+    },
+    swatches: ["#fff0f6", "#b39ddb", "#9575cd", "#4a148c"]
+  },
+  {
+    id: "earth-neutrals",
+    label: "Earth Neutrals",
+    description: "Muted neutrals with a warm, grounded feel.",
+    theme: {
+      fontFamily: "\"Times New Roman\", serif",
+      textColor: "#3e2723",
+      backgroundColor: "#efebe9",
+      highlightColor: "#8d6e63",
+      highlightOutlineColor: "#6d4c41"
+    },
+    swatches: ["#efebe9", "#8d6e63", "#6d4c41", "#3e2723"]
+  },
+  {
+    id: "high-contrast-dark",
+    label: "High-Contrast Dark",
+    description: "Bold cyan highlights on a deep charcoal backdrop.",
+    theme: {
+      fontFamily: "Arial, sans-serif",
+      textColor: "#eeeeee",
+      backgroundColor: "#212121",
+      highlightColor: "#00e5ff",
+      highlightOutlineColor: "#00b8d4"
+    },
+    swatches: ["#212121", "#00e5ff", "#00b8d4", "#eeeeee"]
+  }
+];
 const SPEED_TEST_TEXT =
   "Reading speed tests help you find a comfortable words per minute pace.";
 const DEFAULT_WPM = 300;
-const SAMPLE_TEXTS = [
+const APP_VERSION = "0.1.0";
+type SampleText = {
+  id: string;
+  label: string;
+  text: string;
+};
+type SampleSource = {
+  id: string;
+  label: string;
+  description: string;
+  url: string;
+};
+const SAMPLE_TEXTS: SampleText[] = [
   {
     id: "quick-demo",
     label: "Quick demo",
@@ -55,6 +142,68 @@ const SAMPLE_TEXTS = [
     label: "Productivity tip",
     text:
       "Try increasing your pace gradually while maintaining comprehension and comfort."
+  }
+];
+const LONG_SAMPLE_SOURCES: SampleSource[] = [
+  {
+    id: "pride-and-prejudice",
+    label: "Pride and Prejudice",
+    description: "Jane Austen",
+    url: "https://www.gutenberg.org/cache/epub/1342/pg1342.txt"
+  },
+  {
+    id: "moby-dick",
+    label: "Moby-Dick",
+    description: "Herman Melville",
+    url: "https://www.gutenberg.org/cache/epub/2701/pg2701.txt"
+  },
+  {
+    id: "dracula",
+    label: "Dracula",
+    description: "Bram Stoker",
+    url: "https://www.gutenberg.org/cache/epub/345/pg345.txt"
+  },
+  {
+    id: "frankenstein",
+    label: "Frankenstein",
+    description: "Mary Shelley",
+    url: "https://www.gutenberg.org/cache/epub/84/pg84.txt"
+  },
+  {
+    id: "alice-wonderland",
+    label: "Alice’s Adventures in Wonderland",
+    description: "Lewis Carroll",
+    url: "https://www.gutenberg.org/cache/epub/11/pg11.txt"
+  },
+  {
+    id: "sherlock-holmes",
+    label: "The Adventures of Sherlock Holmes",
+    description: "Arthur Conan Doyle",
+    url: "https://www.gutenberg.org/cache/epub/1661/pg1661.txt"
+  },
+  {
+    id: "tale-of-two-cities",
+    label: "A Tale of Two Cities",
+    description: "Charles Dickens",
+    url: "https://www.gutenberg.org/cache/epub/98/pg98.txt"
+  },
+  {
+    id: "dorian-gray",
+    label: "The Picture of Dorian Gray",
+    description: "Oscar Wilde",
+    url: "https://www.gutenberg.org/cache/epub/174/pg174.txt"
+  },
+  {
+    id: "time-machine",
+    label: "The Time Machine",
+    description: "H. G. Wells",
+    url: "https://www.gutenberg.org/cache/epub/35/pg35.txt"
+  },
+  {
+    id: "war-of-worlds",
+    label: "The War of the Worlds",
+    description: "H. G. Wells",
+    url: "https://www.gutenberg.org/cache/epub/36/pg36.txt"
   }
 ];
 const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
@@ -265,6 +414,13 @@ export default function App() {
 
   const handleThemeReset = () => {
     updateThemeSetting(DEFAULT_THEME);
+  };
+
+  const handleThemePresetSelect = (preset: ThemePreset) => {
+    updateThemeSetting({
+      ...themeSettings,
+      ...preset.theme
+    });
   };
 
   const speedTestWordCount = useMemo(() => {
@@ -521,6 +677,31 @@ export default function App() {
     setFileError(null);
   };
 
+  const handleSampleSourceSelect = async (sample: SampleSource) => {
+    setSampleStatus("loading");
+    setSampleError(null);
+
+    try {
+      const response = await fetch(sample.url);
+      if (!response.ok) {
+        throw new Error("Failed to load sample text.");
+      }
+
+      const text = await response.text();
+      if (!text.trim()) {
+        throw new Error("Sample text was empty.");
+      }
+
+      handleSampleSelect(text);
+      setSampleStatus("success");
+    } catch (error) {
+      setSampleStatus("error");
+      setSampleError(
+        error instanceof Error ? error.message : "Sample load failed."
+      );
+    }
+  };
+
   const handleWikipediaLanguageChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -571,6 +752,9 @@ export default function App() {
         fontFamily: themeSettings.fontFamily
       }}
     >
+      <div className="app__version" data-testid="app-version">
+        v{APP_VERSION}
+      </div>
       <header className="app__header">
         <h1>FastReader</h1>
         <p>Paste text to prepare it for RSVP playback.</p>
@@ -651,6 +835,22 @@ export default function App() {
               </button>
             ))}
           </div>
+          <div className="app__samples-row">
+            <h3 className="app__subtitle">Long reads (public domain)</h3>
+            <div className="app__controls">
+              {LONG_SAMPLE_SOURCES.map((sample) => (
+                <button
+                  key={sample.id}
+                  type="button"
+                  className="app__button"
+                  onClick={() => handleSampleSourceSelect(sample)}
+                  data-testid={`sample-${sample.id}`}
+                >
+                  {sample.label} · {sample.description}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="app__controls app__samples-row">
             <input
               className="app__input"
@@ -708,6 +908,43 @@ export default function App() {
           ) : null}
         </div>
         <div className="app__theme" data-testid="theme-panel">
+          <h2 className="app__subtitle">Theme presets</h2>
+          <div className="app__theme-presets">
+            {THEME_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="app__theme-card"
+                onClick={() => handleThemePresetSelect(preset)}
+                data-testid={`theme-${preset.id}`}
+                aria-label={`${preset.label}: ${preset.description}`}
+              >
+                <div
+                  className="app__theme-title"
+                  style={{ fontFamily: preset.theme.fontFamily }}
+                >
+                  {preset.label}
+                </div>
+                <div className="app__theme-description">{preset.description}</div>
+                <div className="app__theme-swatches">
+                  {preset.swatches.map((color) => (
+                    <span
+                      key={color}
+                      className="app__theme-swatch"
+                      style={{ backgroundColor: color }}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <div
+                  className="app__theme-font"
+                  style={{ fontFamily: preset.theme.fontFamily }}
+                >
+                  {preset.theme.fontFamily}
+                </div>
+              </button>
+            ))}
+          </div>
           <label className="app__label" htmlFor="fontSize">
             Font size
           </label>
