@@ -131,6 +131,12 @@ type SampleSource = {
   description: string;
   url: string;
 };
+type SampleCategory = {
+  id: string;
+  label: string;
+  description: string;
+  samples: SampleSource[];
+};
 const SAMPLE_TEXTS: SampleText[] = [
   {
     id: "quick-demo",
@@ -144,102 +150,189 @@ const SAMPLE_TEXTS: SampleText[] = [
       "Try increasing your pace gradually while maintaining comprehension and comfort."
   }
 ];
-const LONG_SAMPLE_SOURCES: SampleSource[] = [
+const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
   {
-    id: "pride-and-prejudice",
-    label: "Pride and Prejudice",
-    description: "Jane Austen",
-    url: "samples/pride-and-prejudice.txt"
+    id: "english-classics",
+    label: "English Classics",
+    description: "Victorian, gothic, and adventure staples.",
+    samples: [
+      {
+        id: "pride-and-prejudice",
+        label: "Pride and Prejudice",
+        description: "Jane Austen",
+        url: "samples/pride-and-prejudice.txt"
+      },
+      {
+        id: "moby-dick",
+        label: "Moby-Dick",
+        description: "Herman Melville",
+        url: "samples/moby-dick.txt"
+      },
+      {
+        id: "dracula",
+        label: "Dracula",
+        description: "Bram Stoker",
+        url: "samples/dracula.txt"
+      },
+      {
+        id: "frankenstein",
+        label: "Frankenstein",
+        description: "Mary Shelley",
+        url: "samples/frankenstein.txt"
+      },
+      {
+        id: "alice-wonderland",
+        label: "Alice’s Adventures in Wonderland",
+        description: "Lewis Carroll",
+        url: "samples/alice-wonderland.txt"
+      },
+      {
+        id: "sherlock-holmes",
+        label: "The Adventures of Sherlock Holmes",
+        description: "Arthur Conan Doyle",
+        url: "samples/sherlock-holmes.txt"
+      },
+      {
+        id: "tale-of-two-cities",
+        label: "A Tale of Two Cities",
+        description: "Charles Dickens",
+        url: "samples/tale-of-two-cities.txt"
+      },
+      {
+        id: "dorian-gray",
+        label: "The Picture of Dorian Gray",
+        description: "Oscar Wilde",
+        url: "samples/dorian-gray.txt"
+      },
+      {
+        id: "time-machine",
+        label: "The Time Machine",
+        description: "H. G. Wells",
+        url: "samples/time-machine.txt"
+      },
+      {
+        id: "war-of-worlds",
+        label: "The War of the Worlds",
+        description: "H. G. Wells",
+        url: "samples/war-of-worlds.txt"
+      },
+      {
+        id: "great-expectations",
+        label: "Great Expectations",
+        description: "Charles Dickens",
+        url: "samples/great-expectations.txt"
+      },
+      {
+        id: "little-women",
+        label: "Little Women",
+        description: "Louisa May Alcott",
+        url: "samples/little-women.txt"
+      },
+      {
+        id: "jane-eyre",
+        label: "Jane Eyre",
+        description: "Charlotte Brontë",
+        url: "samples/jane-eyre.txt"
+      },
+      {
+        id: "treasure-island",
+        label: "Treasure Island",
+        description: "Robert Louis Stevenson",
+        url: "samples/treasure-island.txt"
+      },
+      {
+        id: "call-of-the-wild",
+        label: "The Call of the Wild",
+        description: "Jack London",
+        url: "samples/call-of-the-wild.txt"
+      },
+      {
+        id: "scarlet-letter",
+        label: "The Scarlet Letter",
+        description: "Nathaniel Hawthorne",
+        url: "samples/scarlet-letter.txt"
+      }
+    ]
   },
   {
-    id: "moby-dick",
-    label: "Moby-Dick",
-    description: "Herman Melville",
-    url: "samples/moby-dick.txt"
+    id: "russian-classics",
+    label: "Russian Classics",
+    description: "Epic novels and realist masterpieces.",
+    samples: [
+      {
+        id: "war-and-peace",
+        label: "War and Peace",
+        description: "Leo Tolstoy",
+        url: "samples/war-and-peace.txt"
+      },
+      {
+        id: "anna-karenina",
+        label: "Anna Karenina",
+        description: "Leo Tolstoy",
+        url: "samples/anna-karenina.txt"
+      },
+      {
+        id: "crime-and-punishment",
+        label: "Crime and Punishment",
+        description: "Fyodor Dostoevsky",
+        url: "samples/crime-and-punishment.txt"
+      },
+      {
+        id: "brothers-karamazov",
+        label: "The Brothers Karamazov",
+        description: "Fyodor Dostoevsky",
+        url: "samples/brothers-karamazov.txt"
+      },
+      {
+        id: "dead-souls",
+        label: "Dead Souls",
+        description: "Nikolai Gogol",
+        url: "samples/dead-souls.txt"
+      },
+      {
+        id: "fathers-and-sons",
+        label: "Fathers and Sons",
+        description: "Ivan Turgenev",
+        url: "samples/fathers-and-sons.txt"
+      }
+    ]
   },
   {
-    id: "dracula",
-    label: "Dracula",
-    description: "Bram Stoker",
-    url: "samples/dracula.txt"
-  },
-  {
-    id: "frankenstein",
-    label: "Frankenstein",
-    description: "Mary Shelley",
-    url: "samples/frankenstein.txt"
-  },
-  {
-    id: "alice-wonderland",
-    label: "Alice’s Adventures in Wonderland",
-    description: "Lewis Carroll",
-    url: "samples/alice-wonderland.txt"
-  },
-  {
-    id: "sherlock-holmes",
-    label: "The Adventures of Sherlock Holmes",
-    description: "Arthur Conan Doyle",
-    url: "samples/sherlock-holmes.txt"
-  },
-  {
-    id: "tale-of-two-cities",
-    label: "A Tale of Two Cities",
-    description: "Charles Dickens",
-    url: "samples/tale-of-two-cities.txt"
-  },
-  {
-    id: "dorian-gray",
-    label: "The Picture of Dorian Gray",
-    description: "Oscar Wilde",
-    url: "samples/dorian-gray.txt"
-  },
-  {
-    id: "time-machine",
-    label: "The Time Machine",
-    description: "H. G. Wells",
-    url: "samples/time-machine.txt"
-  },
-  {
-    id: "war-of-worlds",
-    label: "The War of the Worlds",
-    description: "H. G. Wells",
-    url: "samples/war-of-worlds.txt"
-  },
-  {
-    id: "war-and-peace",
-    label: "War and Peace",
-    description: "Leo Tolstoy",
-    url: "samples/war-and-peace.txt"
-  },
-  {
-    id: "anna-karenina",
-    label: "Anna Karenina",
-    description: "Leo Tolstoy",
-    url: "samples/anna-karenina.txt"
-  },
-  {
-    id: "crime-and-punishment",
-    label: "Crime and Punishment",
-    description: "Fyodor Dostoevsky",
-    url: "samples/crime-and-punishment.txt"
-  },
-  {
-    id: "brothers-karamazov",
-    label: "The Brothers Karamazov",
-    description: "Fyodor Dostoevsky",
-    url: "samples/brothers-karamazov.txt"
-  },
-  {
-    id: "dead-souls",
-    label: "Dead Souls",
-    description: "Nikolai Gogol",
-    url: "samples/dead-souls.txt"
-  },
-  {
-    id: "fathers-and-sons",
-    label: "Fathers and Sons",
-    description: "Ivan Turgenev",
-    url: "samples/fathers-and-sons.txt"
+    id: "socialist-literature",
+    label: "Socialist & Communist",
+    description: "Political essays and utopian classics.",
+    samples: [
+      {
+        id: "communist-manifesto",
+        label: "The Communist Manifesto",
+        description: "Karl Marx & Friedrich Engels",
+        url: "samples/communist-manifesto.txt"
+      },
+      {
+        id: "conquest-of-bread",
+        label: "The Conquest of Bread",
+        description: "Peter Kropotkin",
+        url: "samples/conquest-of-bread.txt"
+      },
+      {
+        id: "state-and-revolution",
+        label: "The State and Revolution",
+        description: "Vladimir Lenin",
+        url: "samples/state-and-revolution.txt"
+      },
+      {
+        id: "looking-backward",
+        label: "Looking Backward",
+        description: "Edward Bellamy",
+        url: "samples/looking-backward.txt"
+      },
+      {
+        id: "utopian-and-scientific",
+        label: "Socialism: Utopian and Scientific",
+        description: "Friedrich Engels",
+        url: "samples/utopian-and-scientific.txt"
+      }
+    ]
   }
 ];
 const DEFAULT_WIKIPEDIA_LANGUAGE = "en";
@@ -873,22 +966,25 @@ export default function App() {
               </button>
             ))}
           </div>
-          <div className="app__samples-row">
-            <h3 className="app__subtitle">Long reads (public domain)</h3>
-            <div className="app__controls">
-              {LONG_SAMPLE_SOURCES.map((sample) => (
-                <button
-                  key={sample.id}
-                  type="button"
-                  className="app__button"
-                  onClick={() => handleSampleSourceSelect(sample)}
-                  data-testid={`sample-${sample.id}`}
-                >
-                  {sample.label} · {sample.description}
-                </button>
-              ))}
+          {LONG_SAMPLE_CATEGORIES.map((category) => (
+            <div key={category.id} className="app__samples-category">
+              <h3 className="app__subtitle">{category.label}</h3>
+              <div className="app__meta">{category.description}</div>
+              <div className="app__controls">
+                {category.samples.map((sample) => (
+                  <button
+                    key={sample.id}
+                    type="button"
+                    className="app__button"
+                    onClick={() => handleSampleSourceSelect(sample)}
+                    data-testid={`sample-${sample.id}`}
+                  >
+                    {sample.label} · {sample.description}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          ))}
           <div className="app__controls app__samples-row">
             <input
               className="app__input"

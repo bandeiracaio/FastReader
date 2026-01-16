@@ -42,6 +42,10 @@
   margin-top: 12px;
 }
 
+.app__samples-category {
+  margin-top: 16px;
+}
+
 .app__subtitle {
   margin: 0 0 8px 0;
   font-size: 18px;

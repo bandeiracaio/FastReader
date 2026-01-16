@@ -549,6 +549,24 @@
 - Step 6 (Russian long reads): Done
   - Stored new texts under public samples.
   - Kept long reads grouped together.
+- Step 1 (Long read categories): Done
+  - Grouped long reads into labeled categories.
+  - Added category descriptions for context.
+- Step 2 (Long read categories): Done
+  - Added new public domain English classics.
+  - Downloaded texts to public samples.
+- Step 3 (Long read categories): Done
+  - Added socialist and communist literature.
+  - Stored local sample files for offline use.
+- Step 4 (Long read categories): Done
+  - Updated sample renderer to loop categories.
+  - Preserved sample status and error flow.
+- Step 5 (Long read categories): Done
+  - Added spacing for category blocks.
+  - Kept sample controls layout consistent.
+- Step 6 (Long read categories): Done
+  - Maintained existing tests.
+  - Ensured sample IDs remain stable.
 - Step 1 (App version badge): Done
   - Added a visible version label in the UI.
   - Positioned it at the top-left corner.
