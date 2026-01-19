@@ -11,7 +11,6 @@ import { assertCondition } from "./lib/assert";
 import { extractEpubTextFromArrayBuffer } from "./lib/epubExtract";
 import { extractPdfTextFromArrayBuffer } from "./lib/pdfExtract";
 import { getHighlightParts } from "./lib/highlight";
-import { computeWpmFromDuration } from "./lib/speedTest";
 import { clampWpm, MAX_WPM, MIN_WPM, wpmToIntervalMs } from "./lib/wpm";
 import { tokenizeText } from "./lib/tokenize";
 
@@ -38,8 +37,8 @@ const DEFAULT_THEME = {
   fontFamily: "system-ui",
   textColor: "#1f2937",
   backgroundColor: "#ffffff",
-  highlightColor: "#111827",
-  highlightOutlineColor: "#000000"
+  highlightColor: "#8b0000",
+  highlightOutlineColor: "#ffffff"
 };
 type ThemeSettings = typeof DEFAULT_THEME;
 type ThemePreset = {
@@ -153,10 +152,151 @@ const THEME_PRESETS: ThemePreset[] = [
       highlightOutlineColor: "#cc241d"
     },
     swatches: ["#282828", "#ebdbb2", "#d79921", "#cc241d"]
+  },
+  {
+    id: "arctic-mint",
+    label: "Arctic Mint",
+    description: "Cool mint highlights on a crisp icy base.",
+    theme: {
+      fontFamily: "Arial, sans-serif",
+      textColor: "#0f172a",
+      backgroundColor: "#f0fdfa",
+      highlightColor: "#0ea5e9",
+      highlightOutlineColor: "#22d3ee"
+    },
+    swatches: ["#f0fdfa", "#0ea5e9", "#22d3ee", "#0f172a"]
+  },
+  {
+    id: "copper-ink",
+    label: "Copper Ink",
+    description: "Dark ink with copper accents for high clarity.",
+    theme: {
+      fontFamily: "\"Times New Roman\", serif",
+      textColor: "#1f2937",
+      backgroundColor: "#fff8f1",
+      highlightColor: "#b45309",
+      highlightOutlineColor: "#fef3c7"
+    },
+    swatches: ["#fff8f1", "#b45309", "#fef3c7", "#1f2937"]
+  },
+  {
+    id: "desert-sand",
+    label: "Desert Sand",
+    description: "Warm sand base with amber highlights.",
+    theme: {
+      fontFamily: "Georgia, serif",
+      textColor: "#4b2e2e",
+      backgroundColor: "#fff7ed",
+      highlightColor: "#f97316",
+      highlightOutlineColor: "#fed7aa"
+    },
+    swatches: ["#fff7ed", "#f97316", "#fed7aa", "#4b2e2e"]
+  },
+  {
+    id: "forest-pine",
+    label: "Forest Pine",
+    description: "Deep greens with a calm, natural feel.",
+    theme: {
+      fontFamily: "Verdana, sans-serif",
+      textColor: "#ecfdf3",
+      backgroundColor: "#0f2a1d",
+      highlightColor: "#22c55e",
+      highlightOutlineColor: "#86efac"
+    },
+    swatches: ["#0f2a1d", "#22c55e", "#86efac", "#ecfdf3"]
+  },
+  {
+    id: "monochrome-slate",
+    label: "Monochrome Slate",
+    description: "Neutral slate tones with sharp contrast.",
+    theme: {
+      fontFamily: "system-ui",
+      textColor: "#0f172a",
+      backgroundColor: "#e2e8f0",
+      highlightColor: "#334155",
+      highlightOutlineColor: "#f8fafc"
+    },
+    swatches: ["#e2e8f0", "#334155", "#f8fafc", "#0f172a"]
+  },
+  {
+    id: "sakura-blush",
+    label: "Sakura Blush",
+    description: "Soft pinks with deep plum accents.",
+    theme: {
+      fontFamily: "\"Trebuchet MS\", sans-serif",
+      textColor: "#4c1d3d",
+      backgroundColor: "#fff1f2",
+      highlightColor: "#ec4899",
+      highlightOutlineColor: "#fbcfe8"
+    },
+    swatches: ["#fff1f2", "#ec4899", "#fbcfe8", "#4c1d3d"]
+  },
+  {
+    id: "midnight-plum",
+    label: "Midnight Plum",
+    description: "Velvety dark purple with bright highlights.",
+    theme: {
+      fontFamily: "\"Trebuchet MS\", sans-serif",
+      textColor: "#f5f3ff",
+      backgroundColor: "#2e1065",
+      highlightColor: "#a855f7",
+      highlightOutlineColor: "#fbcfe8"
+    },
+    swatches: ["#2e1065", "#a855f7", "#fbcfe8", "#f5f3ff"]
+  },
+  {
+    id: "nord-light",
+    label: "Nord Light",
+    description: "Cool gray blues with bright accents.",
+    theme: {
+      fontFamily: "system-ui",
+      textColor: "#2e3440",
+      backgroundColor: "#eceff4",
+      highlightColor: "#5e81ac",
+      highlightOutlineColor: "#88c0d0"
+    },
+    swatches: ["#eceff4", "#5e81ac", "#88c0d0", "#2e3440"]
+  },
+  {
+    id: "cobalt-night",
+    label: "Cobalt Night",
+    description: "Cobalt blues with high-contrast text.",
+    theme: {
+      fontFamily: "Arial, sans-serif",
+      textColor: "#e2e8f0",
+      backgroundColor: "#0f172a",
+      highlightColor: "#38bdf8",
+      highlightOutlineColor: "#f8fafc"
+    },
+    swatches: ["#0f172a", "#38bdf8", "#f8fafc", "#e2e8f0"]
+  },
+  {
+    id: "paperback",
+    label: "Paperback",
+    description: "Soft paper tone with graphite text.",
+    theme: {
+      fontFamily: "\"Times New Roman\", serif",
+      textColor: "#2d2a26",
+      backgroundColor: "#faf3e0",
+      highlightColor: "#b91c1c",
+      highlightOutlineColor: "#ffffff"
+    },
+    swatches: ["#faf3e0", "#b91c1c", "#ffffff", "#2d2a26"]
+  },
+  {
+    id: "olive-studio",
+    label: "Olive Studio",
+    description: "Muted olive palette with warm highlights.",
+    theme: {
+      fontFamily: "Verdana, sans-serif",
+      textColor: "#1f2a1f",
+      backgroundColor: "#f6f7f2",
+      highlightColor: "#6b8e23",
+      highlightOutlineColor: "#d9f99d"
+    },
+    swatches: ["#f6f7f2", "#6b8e23", "#d9f99d", "#1f2a1f"]
   }
 ];
-const SPEED_TEST_TEXT =
-  "Reading speed tests help you find a comfortable words per minute pace.";
 const DEFAULT_WPM = 300;
 const APP_VERSION = __APP_VERSION__;
 type SampleText = {
@@ -432,6 +572,196 @@ const LONG_SAMPLE_CATEGORIES: SampleCategory[] = [
         url: "samples/letter-to-american-workingmen.txt"
       }
     ]
+  },
+  {
+    id: "victorian-social",
+    label: "Victorian Social Novels",
+    description: "Industrial Britain and social reform classics.",
+    samples: [
+      {
+        id: "victorian-hard-times",
+        label: "Hard Times",
+        description: "Charles Dickens",
+        url: "samples/hard-times.txt"
+      },
+      {
+        id: "victorian-north-south",
+        label: "North and South",
+        description: "Elizabeth Gaskell",
+        url: "samples/north-and-south.txt"
+      }
+    ]
+  },
+  {
+    id: "gothic-romantic",
+    label: "Gothic & Romantic",
+    description: "Dark, atmospheric tales and romantic classics.",
+    samples: [
+      {
+        id: "gothic-frankenstein",
+        label: "Frankenstein",
+        description: "Mary Shelley",
+        url: "samples/frankenstein.txt"
+      },
+      {
+        id: "gothic-dracula",
+        label: "Dracula",
+        description: "Bram Stoker",
+        url: "samples/dracula.txt"
+      }
+    ]
+  },
+  {
+    id: "french-classics",
+    label: "French Classics",
+    description: "Epic French novels and literary pillars.",
+    samples: [
+      {
+        id: "french-les-miserables",
+        label: "Les Misérables",
+        description: "Victor Hugo",
+        url: "samples/les-miserables.txt"
+      },
+      {
+        id: "french-monte-cristo",
+        label: "The Count of Monte Cristo",
+        description: "Alexandre Dumas",
+        url: "samples/count-of-monte-cristo.txt"
+      }
+    ]
+  },
+  {
+    id: "ancient-classics",
+    label: "Ancient Classics",
+    description: "Foundational epics from the ancient world.",
+    samples: [
+      {
+        id: "ancient-iliad",
+        label: "The Iliad",
+        description: "Homer",
+        url: "samples/iliad.txt"
+      },
+      {
+        id: "ancient-odyssey",
+        label: "The Odyssey",
+        description: "Homer",
+        url: "samples/odyssey.txt"
+      }
+    ]
+  },
+  {
+    id: "philosophy-essays",
+    label: "Philosophy & Essays",
+    description: "Timeless reflections and political thought.",
+    samples: [
+      {
+        id: "philosophy-meditations",
+        label: "Meditations",
+        description: "Marcus Aurelius",
+        url: "samples/meditations.txt"
+      },
+      {
+        id: "philosophy-on-liberty",
+        label: "On Liberty",
+        description: "John Stuart Mill",
+        url: "samples/on-liberty.txt"
+      }
+    ]
+  },
+  {
+    id: "transcendentalists",
+    label: "American Transcendentalists",
+    description: "Nature, self-reliance, and the inner life.",
+    samples: [
+      {
+        id: "transcendental-walden",
+        label: "Walden",
+        description: "Henry David Thoreau",
+        url: "samples/walden.txt"
+      },
+      {
+        id: "transcendental-self-reliance",
+        label: "Self-Reliance",
+        description: "Ralph Waldo Emerson",
+        url: "samples/self-reliance.txt"
+      }
+    ]
+  },
+  {
+    id: "sci-fi-speculative",
+    label: "Sci-Fi & Speculative",
+    description: "Classic visions of science and the future.",
+    samples: [
+      {
+        id: "sci-fi-time-machine",
+        label: "The Time Machine",
+        description: "H. G. Wells",
+        url: "samples/time-machine.txt"
+      },
+      {
+        id: "sci-fi-war-of-worlds",
+        label: "The War of the Worlds",
+        description: "H. G. Wells",
+        url: "samples/war-of-worlds.txt"
+      }
+    ]
+  },
+  {
+    id: "adventure-sea",
+    label: "Adventure & Sea Tales",
+    description: "Voyages, treasure hunts, and life at sea.",
+    samples: [
+      {
+        id: "adventure-treasure-island",
+        label: "Treasure Island",
+        description: "Robert Louis Stevenson",
+        url: "samples/treasure-island.txt"
+      },
+      {
+        id: "adventure-moby-dick",
+        label: "Moby-Dick",
+        description: "Herman Melville",
+        url: "samples/moby-dick.txt"
+      }
+    ]
+  },
+  {
+    id: "poetry-collections",
+    label: "Poetry Collections",
+    description: "Landmark poetry volumes and anthologies.",
+    samples: [
+      {
+        id: "poetry-leaves-of-grass",
+        label: "Leaves of Grass",
+        description: "Walt Whitman",
+        url: "samples/leaves-of-grass.txt"
+      },
+      {
+        id: "poetry-emily-dickinson",
+        label: "Poems of Emily Dickinson",
+        description: "Emily Dickinson",
+        url: "samples/emily-dickinson-poems.txt"
+      }
+    ]
+  },
+  {
+    id: "plays-drama",
+    label: "Plays & Drama",
+    description: "Stage classics and dramatic works.",
+    samples: [
+      {
+        id: "plays-hamlet",
+        label: "Hamlet",
+        description: "William Shakespeare",
+        url: "samples/hamlet.txt"
+      },
+      {
+        id: "plays-importance-earnest",
+        label: "The Importance of Being Earnest",
+        description: "Oscar Wilde",
+        url: "samples/importance-of-being-earnest.txt"
+      }
+    ]
   }
 ];
 const DEFAULT_GUTENBERG_ID = "1342";
@@ -497,8 +827,6 @@ export default function App() {
       return DEFAULT_THEME;
     }
   });
-  const [speedTestStartMs, setSpeedTestStartMs] = useState<number | null>(null);
-  const [speedTestResult, setSpeedTestResult] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isImportLocked, setIsImportLocked] = useState(false);
   const [isPasteLocked, setIsPasteLocked] = useState(false);
@@ -516,6 +844,9 @@ export default function App() {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [sampleError, setSampleError] = useState<string | null>(null);
+  const [expandedSampleCategoryIds, setExpandedSampleCategoryIds] = useState(
+    () => LONG_SAMPLE_CATEGORIES.map((category) => category.id)
+  );
 
   const tokens = useMemo(() => {
     return tokenizeText(inputText);
@@ -686,26 +1017,6 @@ export default function App() {
       ...themeSettings,
       ...preset.theme
     });
-  };
-
-  const speedTestWordCount = useMemo(() => {
-    return tokenizeText(SPEED_TEST_TEXT).length;
-  }, []);
-
-  const handleSpeedTestStart = () => {
-    setSpeedTestStartMs(Date.now());
-    setSpeedTestResult(null);
-  };
-
-  const handleSpeedTestFinish = () => {
-    if (speedTestStartMs === null) {
-      return;
-    }
-
-    const durationMs = Date.now() - speedTestStartMs;
-    const wpm = computeWpmFromDuration(speedTestWordCount, durationMs);
-    setSpeedTestResult(wpm);
-    setSpeedTestStartMs(null);
   };
 
   const handleFullscreenToggle = async () => {
@@ -1046,6 +1357,15 @@ export default function App() {
     }
   };
 
+  const handleSampleCategoryToggle = (categoryId: string) => {
+    setExpandedSampleCategoryIds((previousIds) => {
+      if (previousIds.includes(categoryId)) {
+        return previousIds.filter((id) => id !== categoryId);
+      }
+      return [...previousIds, categoryId];
+    });
+  };
+
   return (
     <main
       className={`app ${isDistractionFree ? "app--minimal" : ""} ${
@@ -1141,25 +1461,43 @@ export default function App() {
               </button>
             ))}
           </div>
-          {LONG_SAMPLE_CATEGORIES.map((category) => (
-            <div key={category.id} className="app__samples-category">
-              <h3 className="app__subtitle">{category.label}</h3>
-              <div className="app__meta">{category.description}</div>
-              <div className="app__controls">
-                {category.samples.map((sample) => (
+          {LONG_SAMPLE_CATEGORIES.map((category) => {
+            const isExpanded = expandedSampleCategoryIds.includes(category.id);
+            return (
+              <div key={category.id} className="app__samples-category">
+                <div className="app__samples-header">
+                  <div>
+                    <h3 className="app__subtitle">{category.label}</h3>
+                    <div className="app__meta">{category.description}</div>
+                  </div>
                   <button
-                    key={sample.id}
                     type="button"
-                    className="app__button"
-                    onClick={() => handleSampleSourceSelect(sample)}
-                    data-testid={`sample-${sample.id}`}
+                    className="app__button app__button--compact"
+                    onClick={() => handleSampleCategoryToggle(category.id)}
+                    aria-expanded={isExpanded}
+                    data-testid={`sample-category-${category.id}`}
                   >
-                    {sample.label} · {sample.description}
+                    {isExpanded ? "Collapse" : "Expand"}
                   </button>
-                ))}
+                </div>
+                {isExpanded ? (
+                  <div className="app__controls">
+                    {category.samples.map((sample) => (
+                      <button
+                        key={sample.id}
+                        type="button"
+                        className="app__button"
+                        onClick={() => handleSampleSourceSelect(sample)}
+                        data-testid={`sample-${sample.id}`}
+                      >
+                        {sample.label} · {sample.description}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-            </div>
-          ))}
+            );
+          })}
           <div className="app__controls app__samples-row">
             <input
               className="app__input"
@@ -1208,35 +1546,6 @@ export default function App() {
             </div>
           ) : null}
         </div>
-        <div className="app__speed-test" data-testid="speed-test">
-          <h2 className="app__subtitle">Reading speed test</h2>
-          <p className="app__text">{SPEED_TEST_TEXT}</p>
-          <div className="app__controls">
-            <button
-              type="button"
-              className="app__button"
-              onClick={handleSpeedTestStart}
-              disabled={speedTestStartMs !== null}
-              data-testid="speed-test-start"
-            >
-              Start test
-            </button>
-            <button
-              type="button"
-              className="app__button"
-              onClick={handleSpeedTestFinish}
-              disabled={speedTestStartMs === null}
-              data-testid="speed-test-finish"
-            >
-              Finish test
-            </button>
-          </div>
-          {speedTestResult !== null ? (
-            <div className="app__meta" data-testid="speed-test-result">
-              Estimated WPM: {speedTestResult}
-            </div>
-          ) : null}
-        </div>
         <div className="app__theme" data-testid="theme-panel">
           <h2 className="app__subtitle">Theme presets</h2>
           <div className="app__theme-presets">
@@ -1244,7 +1553,7 @@ export default function App() {
               <button
                 key={preset.id}
                 type="button"
-                className="app__theme-card"
+                className="app__theme-card app__theme-card--compact"
                 onClick={() => handleThemePresetSelect(preset)}
                 data-testid={`theme-${preset.id}`}
                 aria-label={`${preset.label}: ${preset.description}`}
@@ -1490,6 +1799,29 @@ export default function App() {
           >
             Next
           </button>
+          <div className="app__word-preview" data-testid="word-preview">
+            {hasTokens && currentWord ? (
+              <span className="app__word-preview-text">
+                <span className="app__word-leading">
+                  {highlightedWord.leading}
+                </span>
+                <span
+                  className="app__word-focus"
+                  style={{
+                    color: themeSettings.highlightColor,
+                    textShadow: `-1px -1px 0 ${themeSettings.highlightOutlineColor}, 1px -1px 0 ${themeSettings.highlightOutlineColor}, -1px 1px 0 ${themeSettings.highlightOutlineColor}, 1px 1px 0 ${themeSettings.highlightOutlineColor}`
+                  }}
+                >
+                  {highlightedWord.focus}
+                </span>
+                <span className="app__word-trailing">
+                  {highlightedWord.trailing}
+                </span>
+              </span>
+            ) : (
+              <span className="app__word-preview-empty">No word</span>
+            )}
+          </div>
         </div>
         <div className="app__status" data-testid="playback-status">
           Status: {statusLabel}

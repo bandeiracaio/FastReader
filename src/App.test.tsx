@@ -244,9 +244,9 @@ describe("App", () => {
 
     expect(screen.getByTestId("font-size-select")).toHaveValue("16");
     expect(screen.getByTestId("font-family-select")).toHaveValue("system-ui");
-    expect(screen.getByTestId("highlight-color-input")).toHaveValue("#111827");
+    expect(screen.getByTestId("highlight-color-input")).toHaveValue("#8b0000");
     expect(screen.getByTestId("highlight-outline-color-input")).toHaveValue(
-      "#000000"
+      "#ffffff"
     );
   });
 
@@ -266,15 +266,15 @@ describe("App", () => {
     );
   });
 
-  it("runs the reading speed test", () => {
-    vi.spyOn(Date, "now").mockReturnValueOnce(0).mockReturnValueOnce(60_000);
-
+  it("collapses a sample category", () => {
     render(<App />);
 
-    fireEvent.click(screen.getByTestId("speed-test-start"));
-    fireEvent.click(screen.getByTestId("speed-test-finish"));
+    const toggle = screen.getByTestId("sample-category-english-classics");
+    fireEvent.click(toggle);
 
-    expect(screen.getByTestId("speed-test-result")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("sample-pride-and-prejudice")
+    ).not.toBeInTheDocument();
   });
 
   it("loads a long sample text", async () => {

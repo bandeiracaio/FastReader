@@ -675,3 +675,21 @@
 - Step 6 (Version from package): Done
   - Confirmed compatibility with Vite config.
   - Kept app header intact.
+- Step 1 (Gutenberg collections expansion): Done
+  - Listed new literature collections to extend samples.
+  - Prepared metadata for added collections.
+- Step 2 (Gutenberg collections expansion): Done
+  - Downloaded additional public domain texts.
+  - Added new sample files for the collections.
+- Step 3 (Gutenberg collections expansion): Done
+  - Added new sample categories and entries.
+  - Reused existing samples where appropriate.
+- Step 4 (Gutenberg collections expansion): Done
+  - Preserved sample loading and chapter selection behavior.
+  - Kept sample status and error handling intact.
+- Step 5 (Gutenberg collections expansion): Done
+  - Ensured expanded sample categories are visible by default.
+  - Maintained consistent UI layout for sample buttons.
+- Step 6 (Gutenberg collections expansion): Done
+  - Updated sample coverage without altering playback logic.
+  - Preserved focus mode visibility rules.

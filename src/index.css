@@ -41,14 +41,6 @@
   margin-top: 24px;
 }
 
-.app__speed-test {
-  border: 1px solid #e5e7eb;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.6);
-}
-
 .app__samples {
   border: 1px solid #e5e7eb;
   padding: 16px;
@@ -65,13 +57,16 @@
   margin-top: 16px;
 }
 
+.app__samples-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .app__subtitle {
   margin: 0 0 8px 0;
   font-size: 18px;
-}
-
-.app__text {
-  margin: 0 0 12px 0;
 }
 
 .app__theme {
@@ -101,14 +96,28 @@
   gap: 6px;
 }
 
+.app__theme-card--compact {
+  padding: 8px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
 .app__theme-title {
   font-weight: 700;
   font-size: 16px;
 }
 
+.app__theme-card--compact .app__theme-title {
+  font-size: 14px;
+}
+
 .app__theme-description {
   font-size: 13px;
   color: #6b7280;
+}
+
+.app__theme-card--compact .app__theme-description {
+  font-size: 12px;
 }
 
 .app__theme-swatches {
@@ -117,11 +126,20 @@
   margin-top: 4px;
 }
 
+.app__theme-card--compact .app__theme-swatches {
+  gap: 4px;
+}
+
 .app__theme-swatch {
   width: 18px;
   height: 18px;
   border-radius: 999px;
   border: 1px solid #d1d5db;
+}
+
+.app__theme-card--compact .app__theme-swatch {
+  width: 14px;
+  height: 14px;
 }
 
 .app__theme-font {
@@ -239,6 +257,11 @@
   font-size: inherit;
 }
 
+.app__button--compact {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
 .app__button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -276,6 +299,28 @@
 
 .app__word-trailing {
   text-align: left;
+}
+
+.app__word-preview {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.app__word-preview-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-size: 14px;
+}
+
+.app__word-preview-empty {
+  color: #6b7280;
+  font-size: 14px;
 }
 
 .app__word-focus {
@@ -345,7 +390,6 @@
 .app--word-focus .app__controls,
 .app--word-focus .app__meta,
 .app--word-focus .app__theme,
-.app--word-focus .app__speed-test,
 .app--word-focus .app__samples,
 .app--word-focus .app__wpm {
   display: none;
@@ -363,7 +407,6 @@
 }
 .app--minimal .app__textarea,
 .app--minimal .app__theme,
-.app--minimal .app__speed-test,
 .app--minimal .app__samples,
 .app--minimal .app__upload,
 .app--minimal .app__controls,
