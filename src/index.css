@@ -251,10 +251,18 @@
 }
 
 .app__word {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.app__word-inner {
   display: grid;
   grid-template-columns: var(--orp-leading-width, 0ch) auto 1fr;
   align-items: center;
-  justify-content: center;
+  position: relative;
+  left: 50%;
+  transform: translateX(calc(-1 * var(--orp-leading-width, 0ch)));
 }
 
 .app__word-leading {

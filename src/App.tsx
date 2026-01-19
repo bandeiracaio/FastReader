@@ -1506,7 +1506,7 @@ export default function App() {
         >
           {hasTokens ? (
             currentWord ? (
-              <>
+              <div className="app__word-inner">
                 <span className="app__word-leading">
                   {highlightedWord.leading}
                 </span>
@@ -1522,7 +1522,7 @@ export default function App() {
                 <span className="app__word-trailing">
                   {highlightedWord.trailing}
                 </span>
-              </>
+              </div>
             ) : (
               "End"
             )
