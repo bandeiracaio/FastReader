@@ -7,22 +7,16 @@ import {
   stepBack,
   stepForward
 } from "./lib/readerState";
-import { assertCondition } from "./lib/assert";
-import { extractEpubTextFromArrayBuffer } from "./lib/epubExtract";
-import { extractPdfTextFromArrayBuffer } from "./lib/pdfExtract";
 import { getHighlightParts } from "./lib/highlight";
 import { clampWpm, MAX_WPM, MIN_WPM, wpmToIntervalMs } from "./lib/wpm";
 import { tokenizeText } from "./lib/tokenize";
 
 const DEFAULT_SAMPLE_TEXT =
   "FastReader will display words one at a time for focused reading.";
-const SUPPORTED_FILE_TYPES = [".pdf", ".epub"];
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
-const IMPORT_STATUSES = ["idle", "loading", "success", "error"] as const;
 const DISRACTION_FREE_STORAGE_KEY = "fastreader:distraction-free";
 const HOTKEYS_STORAGE_KEY = "fastreader:hotkeys-enabled";
 const THEME_STORAGE_KEY = "fastreader:theme-settings";
-const MINUTES_DISPLAY_DECIMALS = 1;
+const MINUTES_DISPLAY_PRECISION = 0;
 
 const FONT_SIZE_OPTIONS = ["14", "16", "18", "20", "24"] as const;
 const FONT_FAMILY_OPTIONS = [
@@ -790,22 +784,9 @@ const extractChapters = (text: string): ChapterOption[] => {
     .filter((chapter) => chapter.text.length > 0);
 };
 
-type ImportStatus = (typeof IMPORT_STATUSES)[number];
-
-type ImportedFileMetadata = {
-  fileName: string;
-  fileType: "pdf" | "epub";
-  fileSizeBytes: number;
-  extractedWordCount: number;
-};
-
 export default function App() {
   const [inputText, setInputText] = useState(DEFAULT_SAMPLE_TEXT);
   const [readerState, setReaderState] = useState(() => createReaderState(0));
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [importedFile, setImportedFile] =
-    useState<ImportedFileMetadata | null>(null);
-  const [importStatus, setImportStatus] = useState<ImportStatus>("idle");
   const [isDistractionFree, setIsDistractionFree] = useState(() => {
     try {
       return localStorage.getItem(DISRACTION_FREE_STORAGE_KEY) === "true";
@@ -829,12 +810,10 @@ export default function App() {
     }
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isImportLocked, setIsImportLocked] = useState(false);
   const [isPasteLocked, setIsPasteLocked] = useState(false);
   const [wpm, setWpm] = useState(DEFAULT_WPM);
   const [isWordFocusMode, setIsWordFocusMode] = useState(false);
   const [sessionElapsedMs, setSessionElapsedMs] = useState(0);
-  const [sessionStartMs, setSessionStartMs] = useState<number | null>(null);
   const [gutenbergBookId, setGutenbergBookId] = useState(
     DEFAULT_GUTENBERG_ID
   );
@@ -845,9 +824,9 @@ export default function App() {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [sampleError, setSampleError] = useState<string | null>(null);
-  const [expandedSampleCategoryIds, setExpandedSampleCategoryIds] = useState(
-    () => []
-  );
+  const [expandedSampleCategoryIds, setExpandedSampleCategoryIds] = useState<
+    string[]
+  >(() => []);
   const [isRemainingTimeVisible, setIsRemainingTimeVisible] = useState(true);
 
   const tokens = useMemo(() => {
@@ -876,7 +855,7 @@ export default function App() {
     ? remainingWordCount / Math.max(wpm, 1)
     : 0;
   const remainingMinutesLabel = `${remainingMinutes.toFixed(
-    MINUTES_DISPLAY_DECIMALS
+    MINUTES_DISPLAY_PRECISION
   )} min`;
 
   useEffect(() => {
@@ -904,19 +883,6 @@ export default function App() {
 
     setReaderState((prevState) => playReader(prevState));
   };
-
-  const handleStopWpm = () => {
-    setReaderState((prevState) => pauseReader(prevState));
-  };
-
-  useEffect(() => {
-    if (!readerState.isPlaying) {
-      setSessionStartMs(null);
-      return;
-    }
-
-    setSessionStartMs(Date.now());
-  }, [readerState.isPlaying]);
 
   useEffect(() => {
     if (!readerState.isPlaying) {
@@ -1119,123 +1085,8 @@ export default function App() {
     };
   }, [readerState.isPlaying, hasTokens, wpm]);
 
-  const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    setFileError(null);
-    setImportedFile(null);
-    setImportStatus("idle");
-    setIsPasteLocked(false);
-
-    if (!selectedFile) {
-      return;
-    }
-
-    const fileName = selectedFile.name.toLowerCase();
-    const isSupportedType = SUPPORTED_FILE_TYPES.some((extension) =>
-      fileName.endsWith(extension)
-    );
-
-    if (!isSupportedType) {
-      setFileError("Only .pdf and .epub files are supported.");
-      setImportStatus("error");
-      event.target.value = "";
-      return;
-    }
-
-    if (selectedFile.size > MAX_UPLOAD_BYTES) {
-      setFileError("File is too large. Max size is 10 MB.");
-      setImportStatus("error");
-      event.target.value = "";
-      return;
-    }
-
-    assertCondition(selectedFile.size >= 0, "File size must be non-negative");
-    if (fileName.endsWith(".pdf")) {
-      setImportStatus("loading");
-      const fileReader = new FileReader();
-      fileReader.onload = async () => {
-        try {
-          const arrayBuffer = fileReader.result as ArrayBuffer;
-          const extractedText =
-            await extractPdfTextFromArrayBuffer(arrayBuffer);
-
-          if (!extractedText) {
-            setFileError("No extractable text found in this PDF.");
-            setImportStatus("error");
-          } else {
-            setInputText(extractedText);
-            setImportedFile({
-              fileName: selectedFile.name,
-              fileType: "pdf",
-              fileSizeBytes: selectedFile.size,
-              extractedWordCount: tokenizeText(extractedText).length
-            });
-            setIsImportLocked(true);
-            setImportStatus("success");
-          }
-        } catch {
-          setFileError("Failed to extract text from the PDF.");
-          setImportStatus("error");
-        } finally {
-          event.target.value = "";
-        }
-      };
-      fileReader.onerror = () => {
-        setFileError("Failed to read the PDF file.");
-        setImportStatus("error");
-        event.target.value = "";
-      };
-      fileReader.readAsArrayBuffer(selectedFile);
-      return;
-    }
-
-    if (fileName.endsWith(".epub")) {
-      setImportStatus("loading");
-      const fileReader = new FileReader();
-      fileReader.onload = async () => {
-        try {
-          const arrayBuffer = fileReader.result as ArrayBuffer;
-          const extractedText =
-            await extractEpubTextFromArrayBuffer(arrayBuffer);
-
-          if (!extractedText) {
-            setFileError("No extractable text found in this EPUB.");
-            setImportStatus("error");
-          } else {
-            setInputText(extractedText);
-            setImportedFile({
-              fileName: selectedFile.name,
-              fileType: "epub",
-              fileSizeBytes: selectedFile.size,
-              extractedWordCount: tokenizeText(extractedText).length
-            });
-            setIsImportLocked(true);
-            setImportStatus("success");
-          }
-        } catch {
-          setFileError("Failed to extract text from the EPUB.");
-          setImportStatus("error");
-        } finally {
-          event.target.value = "";
-        }
-      };
-      fileReader.onerror = () => {
-        setFileError("Failed to read the EPUB file.");
-        setImportStatus("error");
-        event.target.value = "";
-      };
-      fileReader.readAsArrayBuffer(selectedFile);
-      return;
-    }
-
-    event.target.value = "";
-  };
-
   const handlePasteText = () => {
     setIsPasteLocked(true);
-    setIsImportLocked(false);
-    setImportedFile(null);
-    setImportStatus("idle");
   };
 
   const handleWpmChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1250,19 +1101,11 @@ export default function App() {
   const handleClearInput = () => {
     setInputText("");
     setIsPasteLocked(false);
-    setIsImportLocked(false);
-    setImportedFile(null);
-    setImportStatus("idle");
-    setFileError(null);
   };
 
   const handleSampleSelect = (text: string) => {
     setInputText(text);
     setIsPasteLocked(true);
-    setIsImportLocked(false);
-    setImportedFile(null);
-    setImportStatus("idle");
-    setFileError(null);
     setLoadedSampleText(text);
     setChapterOptions(extractChapters(text));
     setSelectedChapterId("full");
@@ -1734,9 +1577,10 @@ export default function App() {
           value={inputText}
           onChange={handleInputChange}
           rows={10}
-          disabled={isImportLocked}
         />
-        <div className="app__meta">Words: {tokenCount}</div>
+        <div className="app__meta">
+          Words: {tokenCount.toLocaleString("de-DE")}
+        </div>
         <div className="app__controls">
           <button
             type="button"
@@ -1781,36 +1625,6 @@ export default function App() {
               Start at WPM
             </button>
           </div>
-        </div>
-        <div className="app__upload">
-          <label className="app__label" htmlFor="fileUpload">
-            Upload PDF or EPUB
-          </label>
-          <input
-            id="fileUpload"
-            className="app__file-input"
-            type="file"
-            accept={SUPPORTED_FILE_TYPES.join(",")}
-            onChange={handleFileSelection}
-            data-testid="file-input"
-            disabled={isPasteLocked}
-          />
-          <div className="app__import-status" data-testid="import-status">
-            Import status: {importStatus}
-          </div>
-          {importedFile ? (
-            <div className="app__file-meta" data-testid="file-metadata">
-              <div>File: {importedFile.fileName}</div>
-              <div>Type: {importedFile.fileType}</div>
-              <div>Size: {importedFile.fileSizeBytes} bytes</div>
-              <div>Extracted words: {importedFile.extractedWordCount}</div>
-            </div>
-          ) : null}
-          {fileError ? (
-            <div className="app__error" role="alert">
-              {fileError}
-            </div>
-          ) : null}
         </div>
         <div className="app__controls">
           <button

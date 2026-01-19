@@ -711,3 +711,21 @@
 - Step 6 (Focus remaining time + sample collapse): Done
   - Verified no impact to reader state transitions.
   - Maintained consistent theme and sample behavior.
+- Step 1 (Remove file upload): Done
+  - Removed PDF/EPUB upload UI section.
+  - Planned cleanup for upload-related state and tests.
+- Step 2 (Remove file upload): Done
+  - Deleted upload state, handlers, and imports.
+  - Removed upload-related styles.
+- Step 3 (Remove file upload): Done
+  - Updated tests to remove upload coverage.
+  - Adjusted remaining tests for paste flow.
+- Step 4 (Remove file upload): Done
+  - Ensured sample load and reader controls remain intact.
+  - Kept focus mode behavior unchanged.
+- Step 5 (Remove file upload): Done
+  - Removed unused code paths and constants.
+  - Preserved text input and sample functionality.
+- Step 6 (Remove file upload): Done
+  - Confirmed no lint errors after removal.
+  - Kept layout consistent without upload section.

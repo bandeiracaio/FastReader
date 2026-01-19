@@ -8,45 +8,15 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { extractEpubTextFromArrayBuffer } from "./lib/epubExtract";
-import { extractPdfTextFromArrayBuffer } from "./lib/pdfExtract";
 import { tokenizeText } from "./lib/tokenize";
 
-vi.mock("./lib/pdfExtract", () => {
-  return {
-    extractPdfTextFromArrayBuffer: vi.fn()
-  };
-});
-
-vi.mock("./lib/epubExtract", () => {
-  return {
-    extractEpubTextFromArrayBuffer: vi.fn()
-  };
-});
-
-const originalFileReader = globalThis.FileReader;
 const originalFetch = globalThis.fetch;
 
 afterEach(() => {
   vi.clearAllMocks();
   cleanup();
-  globalThis.FileReader = originalFileReader;
   globalThis.fetch = originalFetch;
 });
-
-const createMockFileReader = () =>
-  class MockFileReader {
-    result: ArrayBuffer | null = null;
-    onload: ((event: Event) => void) | null = null;
-    onerror: ((event: Event) => void) | null = null;
-
-    readAsArrayBuffer() {
-      this.result = new ArrayBuffer(8);
-      queueMicrotask(() => {
-        this.onload?.(new Event("load"));
-      });
-    }
-  };
 
 describe("App", () => {
   it("shows the initial word count", () => {
@@ -118,75 +88,6 @@ describe("App", () => {
     );
   });
 
-  it("rejects unsupported file types", () => {
-    render(<App />);
-
-    const fileInput = screen.getByTestId("file-input");
-    const invalidFile = new File(["oops"], "notes.txt", {
-      type: "text/plain"
-    });
-
-    fireEvent.change(fileInput, { target: { files: [invalidFile] } });
-
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Only .pdf and .epub files are supported."
-    );
-    expect(screen.getByTestId("import-status")).toHaveTextContent(
-      "Import status: error"
-    );
-  });
-
-  it("rejects files above the size limit", () => {
-    render(<App />);
-
-    const fileInput = screen.getByTestId("file-input");
-    const largeFile = new File(["large"], "book.pdf", {
-      type: "application/pdf"
-    });
-
-    Object.defineProperty(largeFile, "size", {
-      value: 10 * 1024 * 1024 + 1
-    });
-
-    fireEvent.change(fileInput, { target: { files: [largeFile] } });
-
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "File is too large. Max size is 10 MB."
-    );
-    expect(screen.getByTestId("import-status")).toHaveTextContent(
-      "Import status: error"
-    );
-  });
-
-  it("shows file metadata after PDF import", async () => {
-    const pdfExtractMock =
-      extractPdfTextFromArrayBuffer as unknown as ReturnType<typeof vi.fn>;
-    pdfExtractMock.mockResolvedValueOnce("Hello world");
-
-    globalThis.FileReader = createMockFileReader();
-
-    render(<App />);
-
-    const fileInput = screen.getByTestId("file-input");
-    const pdfFile = new File(["pdf"], "book.pdf", {
-      type: "application/pdf"
-    });
-
-    fireEvent.change(fileInput, { target: { files: [pdfFile] } });
-
-    await screen.findByTestId("file-metadata");
-
-    expect(screen.getByTestId("import-status")).toHaveTextContent(
-      "Import status: success"
-    );
-    expect(screen.getByTestId("file-metadata")).toHaveTextContent(
-      "File: book.pdf"
-    );
-    expect(screen.getByTestId("file-metadata")).toHaveTextContent("Type: pdf");
-    expect(screen.getByTestId("file-metadata")).toHaveTextContent(
-      "Extracted words: 2"
-    );
-  });
 
   it("toggles distraction-free mode", () => {
     render(<App />);
@@ -432,19 +333,7 @@ describe("App", () => {
     vi.useRealTimers();
   });
 
-  it("locks file upload when using pasted text", () => {
-    render(<App />);
-
-    const pasteToggle = screen.getByTestId("paste-toggle");
-    const fileInput = screen.getByTestId("file-input");
-
-    fireEvent.click(pasteToggle);
-
-    expect(pasteToggle).toBeDisabled();
-    expect(fileInput).toBeDisabled();
-  });
-
-  it("clears input and resets import state", () => {
+  it("clears input", () => {
     render(<App />);
 
     const textarea = screen.getByLabelText("Input text");
@@ -453,9 +342,6 @@ describe("App", () => {
     fireEvent.click(screen.getByTestId("clear-text"));
 
     expect(textarea).toHaveValue("");
-    expect(screen.getByTestId("import-status")).toHaveTextContent(
-      "Import status: idle"
-    );
   });
 
   it("handles hotkeys for play and step", () => {
@@ -493,23 +379,4 @@ describe("App", () => {
     );
   });
 
-  it("rejects epub when no text is extracted", async () => {
-    const epubExtractMock =
-      extractEpubTextFromArrayBuffer as unknown as ReturnType<typeof vi.fn>;
-    epubExtractMock.mockResolvedValueOnce("");
-    globalThis.FileReader = createMockFileReader();
-
-    render(<App />);
-
-    const fileInput = screen.getByTestId("file-input");
-    const epubFile = new File(["epub"], "book.epub", {
-      type: "application/epub+zip"
-    });
-
-    fireEvent.change(fileInput, { target: { files: [epubFile] } });
-    await screen.findByText("No extractable text found in this EPUB.");
-    expect(screen.getByTestId("import-status")).toHaveTextContent(
-      "Import status: error"
-    );
-  });
 });

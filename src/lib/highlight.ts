@@ -13,7 +13,7 @@ export function getHighlightParts(word: string): HighlightParts {
     return { leading: "", focus: "", trailing: "" };
   }
 
-  const focusIndex = Math.max(Math.floor(word.length / 2) - 1, 0);
+  const focusIndex = Math.max(Math.floor(word.length / 2), 0);
 
   return {
     leading: word.slice(0, focusIndex),

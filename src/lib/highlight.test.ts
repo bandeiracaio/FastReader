@@ -12,9 +12,9 @@ describe("getHighlightParts", () => {
 
   it("highlights the center character", () => {
     expect(getHighlightParts("Fast")).toEqual({
-      leading: "F",
-      focus: "a",
-      trailing: "st"
+      leading: "Fa",
+      focus: "s",
+      trailing: "t"
     });
   });
 

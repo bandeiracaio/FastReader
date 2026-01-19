@@ -220,31 +220,10 @@
   color: #6b7280;
 }
 
-.app__upload {
-  margin-top: 16px;
-}
-
-.app__file-input {
-  display: block;
-  margin-top: 8px;
-}
-
 .app__error {
   margin-top: 8px;
   color: #b91c1c;
   font-size: 14px;
-}
-
-.app__import-status {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #4b5563;
-}
-
-.app__file-meta {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #374151;
 }
 
 .app__controls {
@@ -394,7 +373,6 @@
 }
 
 .app--word-focus .app__textarea,
-.app--word-focus .app__upload,
 .app--word-focus .app__controls,
 .app--word-focus .app__meta,
 .app--word-focus .app__theme,
@@ -416,7 +394,6 @@
 .app--minimal .app__textarea,
 .app--minimal .app__theme,
 .app--minimal .app__samples,
-.app--minimal .app__upload,
 .app--minimal .app__controls,
 .app--minimal .app__meta {
   display: none;
