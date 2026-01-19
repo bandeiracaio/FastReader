@@ -22,6 +22,7 @@ const IMPORT_STATUSES = ["idle", "loading", "success", "error"] as const;
 const DISRACTION_FREE_STORAGE_KEY = "fastreader:distraction-free";
 const HOTKEYS_STORAGE_KEY = "fastreader:hotkeys-enabled";
 const THEME_STORAGE_KEY = "fastreader:theme-settings";
+const MINUTES_DISPLAY_DECIMALS = 1;
 
 const FONT_SIZE_OPTIONS = ["14", "16", "18", "20", "24"] as const;
 const FONT_FAMILY_OPTIONS = [
@@ -845,8 +846,9 @@ export default function App() {
   >("idle");
   const [sampleError, setSampleError] = useState<string | null>(null);
   const [expandedSampleCategoryIds, setExpandedSampleCategoryIds] = useState(
-    () => LONG_SAMPLE_CATEGORIES.map((category) => category.id)
+    () => []
   );
+  const [isRemainingTimeVisible, setIsRemainingTimeVisible] = useState(true);
 
   const tokens = useMemo(() => {
     return tokenizeText(inputText);
@@ -866,6 +868,16 @@ export default function App() {
   const tokenCount = tokens.length;
   const hasTokens = tokenCount > 0;
   const progress = computeProgress(readerState.currentIndex, tokenCount);
+  const remainingWordCount = Math.max(
+    tokenCount - readerState.currentIndex,
+    0
+  );
+  const remainingMinutes = hasTokens
+    ? remainingWordCount / Math.max(wpm, 1)
+    : 0;
+  const remainingMinutesLabel = `${remainingMinutes.toFixed(
+    MINUTES_DISPLAY_DECIMALS
+  )} min`;
 
   useEffect(() => {
     setReaderState(createReaderState(tokenCount));
@@ -1366,6 +1378,10 @@ export default function App() {
     });
   };
 
+  const handleRemainingTimeToggle = () => {
+    setIsRemainingTimeVisible((previousValue) => !previousValue);
+  };
+
   return (
     <main
       className={`app ${isDistractionFree ? "app--minimal" : ""} ${
@@ -1419,12 +1435,27 @@ export default function App() {
           {isWordFocusMode ? "Exit word focus" : "Focus current word"}
         </button>
       </div>
+      <div className="app__toggle-help">
+        <p className="app__meta">
+          Focus mode hides setup panels so you can concentrate on the current
+          word.
+        </p>
+        <p className="app__meta">
+          Hotkeys let you control playback with the keyboard (space to play or
+          pause, arrows to step).
+        </p>
+      </div>
       {isWordFocusMode ? (
         <div className="app__focus-panel" data-testid="focus-panel">
           <div className="app__focus-info">WPM: {wpm}</div>
           <div className="app__focus-info">
             Time: {sessionElapsedSeconds}s
           </div>
+          {isRemainingTimeVisible ? (
+            <div className="app__focus-info" data-testid="focus-remaining-time">
+              Remaining: {remainingMinutesLabel}
+            </div>
+          ) : null}
           <input
             className="app__input"
             type="number"
@@ -1442,6 +1473,14 @@ export default function App() {
             data-testid="focus-play-toggle"
           >
             {readerState.isPlaying ? "Pause" : "Play"}
+          </button>
+          <button
+            type="button"
+            className="app__button app__button--compact"
+            onClick={handleRemainingTimeToggle}
+            data-testid="focus-remaining-toggle"
+          >
+            {isRemainingTimeVisible ? "Hide time" : "Show time"}
           </button>
         </div>
       ) : null}
@@ -1467,7 +1506,9 @@ export default function App() {
               <div key={category.id} className="app__samples-category">
                 <div className="app__samples-header">
                   <div>
-                    <h3 className="app__subtitle">{category.label}</h3>
+                    <h3 className="app__subtitle">
+                      {category.label} ({category.samples.length})
+                    </h3>
                     <div className="app__meta">{category.description}</div>
                   </div>
                   <button

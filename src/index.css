@@ -190,6 +190,14 @@
   flex-wrap: wrap;
 }
 
+.app__toggle-help {
+  margin-top: 8px;
+}
+
+.app__toggle-help .app__meta {
+  margin-top: 4px;
+}
+
 .app__label {
   display: block;
   font-weight: 600;

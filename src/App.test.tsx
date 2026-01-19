@@ -271,7 +271,11 @@ describe("App", () => {
 
     const toggle = screen.getByTestId("sample-category-english-classics");
     fireEvent.click(toggle);
+    expect(
+      screen.getByTestId("sample-pride-and-prejudice")
+    ).toBeInTheDocument();
 
+    fireEvent.click(toggle);
     expect(
       screen.queryByTestId("sample-pride-and-prejudice")
     ).not.toBeInTheDocument();
@@ -285,6 +289,7 @@ describe("App", () => {
 
     render(<App />);
 
+    fireEvent.click(screen.getByTestId("sample-category-english-classics"));
     fireEvent.click(screen.getByTestId("sample-pride-and-prejudice"));
 
     expect(
@@ -397,6 +402,18 @@ describe("App", () => {
     expect(screen.getByTestId("focus-panel")).toBeInTheDocument();
     expect(screen.getByTestId("focus-wpm-input")).toHaveValue(300);
     expect(screen.getByTestId("focus-play-toggle")).toHaveTextContent("Play");
+    expect(screen.getByTestId("focus-remaining-time")).toBeInTheDocument();
+  });
+
+  it("toggles remaining time visibility in word focus mode", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByTestId("word-focus-toggle"));
+    fireEvent.click(screen.getByTestId("focus-remaining-toggle"));
+
+    expect(
+      screen.queryByTestId("focus-remaining-time")
+    ).not.toBeInTheDocument();
   });
 
   it("shows elapsed time in word focus mode", () => {

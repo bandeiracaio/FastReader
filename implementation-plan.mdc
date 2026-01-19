@@ -693,3 +693,21 @@
 - Step 6 (Gutenberg collections expansion): Done
   - Updated sample coverage without altering playback logic.
   - Preserved focus mode visibility rules.
+- Step 1 (Focus remaining time + sample collapse): Done
+  - Defined remaining-time display and hide toggle in focus mode.
+  - Planned default-collapsed sample categories with counts.
+- Step 2 (Focus remaining time + sample collapse): Done
+  - Implemented remaining minutes calculation and toggle state.
+  - Defaulted sample categories to collapsed with counts.
+- Step 3 (Focus remaining time + sample collapse): Done
+  - Added focus-mode remaining time UI and toggle button.
+  - Added toggle descriptions for focus mode and hotkeys.
+- Step 4 (Focus remaining time + sample collapse): Done
+  - Updated tests for collapsed samples and remaining time toggle.
+  - Preserved existing playback and sample loading tests.
+- Step 5 (Focus remaining time + sample collapse): Done
+  - Added supporting styles for toggle help text.
+  - Kept layout consistent across focus and standard modes.
+- Step 6 (Focus remaining time + sample collapse): Done
+  - Verified no impact to reader state transitions.
+  - Maintained consistent theme and sample behavior.
