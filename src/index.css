@@ -875,6 +875,47 @@ kbd {
 }
 
 /* ══════════════════════════════════════
+   IMMERSIVE MODE
+══════════════════════════════════════ */
+.reader--immersive {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  max-width: none;
+}
+
+.reader__immersive-exit {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+  z-index: 51;
+}
+
+.reader__immersive-exit:hover { opacity: 0.85; }
+
+/* Font size group */
+.reader__font-size-group {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════════════
    MOBILE
 ══════════════════════════════════════ */
 @media (max-width: 480px) {

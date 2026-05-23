@@ -23,8 +23,10 @@ import Settings from "./screens/Settings";
 
 const HOTKEYS_STORAGE_KEY = "fastreader:hotkeys-enabled";
 const THEME_STORAGE_KEY = "fastreader:theme-settings";
+const WORD_FONT_SIZE_STORAGE_KEY = "fastreader:word-font-size";
 const APP_VERSION = __APP_VERSION__;
 const DEFAULT_WPM = 300;
+const DEFAULT_WORD_FONT_SIZE = 72;
 
 const extractChapters = (text: string): ChapterOption[] => {
   const matches = Array.from(text.matchAll(/^\s*chapter\s+[^\n]+/gim));
@@ -49,7 +51,13 @@ export default function App() {
   const [readerState, setReaderState] = useState<ReaderState>(() => createReaderState(0));
   const [wpm, setWpm] = useState(DEFAULT_WPM);
   const [isWordFocusMode, setIsWordFocusMode] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isImmersiveMode, setIsImmersiveMode] = useState(false);
+  const [wordFontSize, setWordFontSize] = useState(() => {
+    try {
+      const stored = localStorage.getItem(WORD_FONT_SIZE_STORAGE_KEY);
+      return stored ? Number(stored) : DEFAULT_WORD_FONT_SIZE;
+    } catch { return DEFAULT_WORD_FONT_SIZE; }
+  });
   const [sessionElapsedMs, setSessionElapsedMs] = useState(0);
   const [loadedSampleText, setLoadedSampleText] = useState<string | null>(null);
   const [chapterOptions, setChapterOptions] = useState<ChapterOption[]>([]);
@@ -140,9 +148,9 @@ export default function App() {
     return () => window.clearInterval(id);
   }, [readerState.isPlaying]);
 
-  // Fullscreen change listener
+  // Exit immersive mode when browser fullscreen is dismissed (e.g. Escape key)
   useEffect(() => {
-    const onFsChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    const onFsChange = () => { if (!document.fullscreenElement) setIsImmersiveMode(false); };
     document.addEventListener("fullscreenchange", onFsChange);
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
@@ -265,14 +273,22 @@ export default function App() {
     updateTheme({ ...themeSettings, ...patch });
   };
 
-  const handleFullscreenToggle = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
+  const handleImmersiveModeToggle = useCallback(async () => {
+    if (!isImmersiveMode) {
+      setIsImmersiveMode(true);
+      try { await document.documentElement.requestFullscreen(); } catch { /* ignore */ }
+    } else {
+      setIsImmersiveMode(false);
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch { /* ignore */ }
       }
-    } catch { /* ignore */ }
+    }
+  }, [isImmersiveMode]);
+
+  const handleWordFontSizeChange = (size: number) => {
+    const clamped = Math.max(32, Math.min(160, size));
+    setWordFontSize(clamped);
+    try { localStorage.setItem(WORD_FONT_SIZE_STORAGE_KEY, String(clamped)); } catch { /* ignore */ }
   };
 
   const handleHotkeysToggle = () => {
@@ -323,7 +339,7 @@ export default function App() {
         fontFamily: themeSettings.fontFamily
       }}
     >
-      <nav className="nav">
+      {!isImmersiveMode ? <nav className="nav">
         <span className="nav__brand">FastReader</span>
         <div className="nav__links">
           {(["reader", "library", "settings"] as Screen[]).map((s) => (
@@ -338,7 +354,7 @@ export default function App() {
           ))}
         </div>
         <span className="nav__version" data-testid="app-version">v{APP_VERSION}</span>
-      </nav>
+      </nav> : null}
 
       {screen === "reader" ? (
         <Reader
@@ -349,7 +365,7 @@ export default function App() {
           wpm={wpm}
           sessionElapsedMs={sessionElapsedMs}
           isWordFocusMode={isWordFocusMode}
-          isFullscreen={isFullscreen}
+          isImmersiveMode={isImmersiveMode}
           areHotkeysEnabled={areHotkeysEnabled}
           themeSettings={themeSettings}
           chapterOptions={chapterOptions}
@@ -357,6 +373,7 @@ export default function App() {
           loadedBookTitle={loadedBookTitle}
           featuredSamples={LONG_SAMPLE_CATEGORIES.flatMap((c) => c.samples).slice(0, 3)}
           sampleLoadingId={sampleLoadingId}
+          wordFontSize={wordFontSize}
           onTextChange={handleTextChange}
           onChangeText={handleChangeText}
           onSampleSelect={handleSampleSourceSelect}
@@ -367,9 +384,10 @@ export default function App() {
           onScrub={handleScrub}
           onWpmChange={(v) => setWpm(clampWpm(v))}
           onWordFocusToggle={() => setIsWordFocusMode((prev) => !prev)}
-          onFullscreenToggle={handleFullscreenToggle}
+          onImmersiveModeToggle={handleImmersiveModeToggle}
           onHotkeysToggle={handleHotkeysToggle}
           onNavigateToLibrary={() => setScreen("library")}
+          onWordFontSizeChange={handleWordFontSizeChange}
         />
       ) : screen === "library" ? (
         <Library

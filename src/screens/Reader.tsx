@@ -6,6 +6,8 @@ import { QUICK_DEMO_TEXT } from "../data/samples";
 
 const MINUTES_DISPLAY_PRECISION = 0;
 const CONTEXT_WINDOW = 6;
+export const MIN_WORD_FONT_SIZE = 32;
+export const MAX_WORD_FONT_SIZE = 160;
 
 type Props = {
   inputText: string;
@@ -15,7 +17,7 @@ type Props = {
   wpm: number;
   sessionElapsedMs: number;
   isWordFocusMode: boolean;
-  isFullscreen: boolean;
+  isImmersiveMode: boolean;
   areHotkeysEnabled: boolean;
   themeSettings: ThemeSettings;
   chapterOptions: ChapterOption[];
@@ -23,6 +25,7 @@ type Props = {
   loadedBookTitle: string | null;
   featuredSamples: SampleSource[];
   sampleLoadingId: string | null;
+  wordFontSize: number;
   onTextChange: (text: string) => void;
   onChangeText: () => void;
   onChapterChange: (id: string) => void;
@@ -32,10 +35,11 @@ type Props = {
   onScrub: (index: number) => void;
   onWpmChange: (wpm: number) => void;
   onWordFocusToggle: () => void;
-  onFullscreenToggle: () => void;
+  onImmersiveModeToggle: () => void;
   onHotkeysToggle: () => void;
   onNavigateToLibrary: () => void;
   onSampleSelect: (sample: SampleSource) => void;
+  onWordFontSizeChange: (size: number) => void;
 };
 
 export default function Reader({
@@ -46,7 +50,7 @@ export default function Reader({
   wpm,
   sessionElapsedMs,
   isWordFocusMode,
-  isFullscreen,
+  isImmersiveMode,
   areHotkeysEnabled,
   themeSettings,
   chapterOptions,
@@ -54,6 +58,7 @@ export default function Reader({
   loadedBookTitle,
   featuredSamples,
   sampleLoadingId,
+  wordFontSize,
   onTextChange,
   onChangeText,
   onChapterChange,
@@ -63,10 +68,11 @@ export default function Reader({
   onScrub,
   onWpmChange,
   onWordFocusToggle,
-  onFullscreenToggle,
+  onImmersiveModeToggle,
   onHotkeysToggle,
   onNavigateToLibrary,
   onSampleSelect,
+  onWordFontSizeChange,
 }: Props) {
   const tokenCount = tokens.length;
   const hasTokens = tokenCount > 0;
@@ -85,7 +91,8 @@ export default function Reader({
   const elapsedLabel = `${elapsedMinutes}:${String(elapsedSecondsRemainder).padStart(2, "0")}`;
 
   const wordStyle = {
-    ["--orp-leading-width" as string]: `${maxLeadingLength}ch`
+    ["--orp-leading-width" as string]: `${maxLeadingLength}ch`,
+    fontSize: `${wordFontSize}px`,
   };
 
   const focusLetterStyle = {
@@ -97,6 +104,36 @@ export default function Reader({
   const contextEnd = Math.min(tokenCount, currentIndex + CONTEXT_WINDOW + 1);
   const contextTokens = tokens.slice(contextStart, contextEnd);
   const contextCurrentIdx = currentIndex - contextStart;
+
+  const wordDisplay = currentWord ? (
+    <div className="reader__word" style={wordStyle}>
+      <div className="reader__word-inner">
+        <span className="reader__word-leading">{highlightedWord.leading}</span>
+        <span className="reader__word-focus" style={focusLetterStyle}>
+          {highlightedWord.focus}
+        </span>
+        <span className="reader__word-trailing">{highlightedWord.trailing}</span>
+      </div>
+    </div>
+  ) : (
+    <div className="reader__word reader__word--end" style={{ fontSize: `${wordFontSize}px` }}>End</div>
+  );
+
+  if (isImmersiveMode && hasTokens) {
+    return (
+      <div className="screen reader reader--immersive" onClick={onPlayToggle}>
+        {wordDisplay}
+        <button
+          type="button"
+          className="reader__immersive-exit"
+          onClick={(e) => { e.stopPropagation(); onImmersiveModeToggle(); }}
+          aria-label="Exit immersive mode"
+        >
+          Exit
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={`screen reader${isWordFocusMode ? " reader--word-focus" : ""}`}>
@@ -132,21 +169,7 @@ export default function Reader({
       ) : null}
 
       <div className="reader__stage" data-testid="current-word">
-        {hasTokens ? (
-          currentWord ? (
-            <div className="reader__word" style={wordStyle}>
-              <div className="reader__word-inner">
-                <span className="reader__word-leading">{highlightedWord.leading}</span>
-                <span className="reader__word-focus" style={focusLetterStyle}>
-                  {highlightedWord.focus}
-                </span>
-                <span className="reader__word-trailing">{highlightedWord.trailing}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="reader__word reader__word--end">End</div>
-          )
-        ) : (
+        {hasTokens ? wordDisplay : (
           <div className="reader__empty">
             <p className="reader__empty-heading">What do you want to read?</p>
             {featuredSamples.length > 0 ? (
@@ -274,10 +297,11 @@ export default function Reader({
         <button
           type="button"
           className="btn btn--small"
-          onClick={onFullscreenToggle}
-          data-testid="fullscreen-toggle"
+          onClick={onImmersiveModeToggle}
+          disabled={!hasTokens}
+          data-testid="immersive-toggle"
         >
-          {isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          Immersive
         </button>
         <button
           type="button"
@@ -287,6 +311,26 @@ export default function Reader({
         >
           {areHotkeysEnabled ? "Hotkeys on" : "Hotkeys off"}
         </button>
+        <div className="reader__font-size-group">
+          <button
+            type="button"
+            className="btn btn--small"
+            onClick={() => onWordFontSizeChange(wordFontSize - 8)}
+            disabled={wordFontSize <= MIN_WORD_FONT_SIZE}
+            aria-label="Decrease word size"
+          >
+            A−
+          </button>
+          <button
+            type="button"
+            className="btn btn--small"
+            onClick={() => onWordFontSizeChange(wordFontSize + 8)}
+            disabled={wordFontSize >= MAX_WORD_FONT_SIZE}
+            aria-label="Increase word size"
+          >
+            A+
+          </button>
+        </div>
       </div>
 
       {areHotkeysEnabled ? (
