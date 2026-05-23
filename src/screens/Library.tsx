@@ -8,14 +8,17 @@ import {
   formatDownloadCount,
   type GutenbergBook,
 } from "../lib/gutenberg";
+import type { HistoryEntry } from "../lib/history";
 
 type Props = {
   sampleCategories: SampleCategory[];
-  onBookLoad: (text: string, title: string) => void;
+  onBookLoad: (text: string, title: string, gutenbergId?: number) => void;
   onNavigateToReader: () => void;
   onSampleSourceSelect: (sample: SampleSource) => void;
   sampleLoadingId: string | null;
   sampleError: string | null;
+  readingHistory: HistoryEntry[];
+  onResumeFromHistory: (entry: HistoryEntry) => void;
 };
 
 export default function Library({
@@ -25,6 +28,8 @@ export default function Library({
   onSampleSourceSelect,
   sampleLoadingId,
   sampleError,
+  readingHistory,
+  onResumeFromHistory,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -78,7 +83,7 @@ export default function Library({
     setError(null);
     try {
       const text = await loadGutenbergBook(book.id);
-      onBookLoad(text, book.title);
+      onBookLoad(text, book.title, book.id);
       onNavigateToReader();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load book.");
@@ -95,6 +100,37 @@ export default function Library({
 
   return (
     <div className="screen library">
+      {readingHistory.length > 0 ? (
+        <div className="library__history">
+          <h2 className="library__section-title">Continue reading</h2>
+          <div className="library__history-list">
+            {readingHistory.map((entry) => {
+              const pct = Math.round(entry.progress * 100);
+              const isLoading = sampleLoadingId === `history:${entry.title}` || sampleLoadingId === entry.sampleId;
+              return (
+                <div key={entry.title} className="library__history-card">
+                  <div className="library__history-title">{entry.title}</div>
+                  <div className="library__history-progress-bar">
+                    <div className="library__history-progress-fill" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="library__history-meta">{pct === 100 ? "Finished" : `${pct}% read`}</div>
+                  {(entry.gutenbergId != null || entry.sampleId != null) ? (
+                    <button
+                      type="button"
+                      className="btn btn--small"
+                      onClick={() => onResumeFromHistory(entry)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Loading…" : "Resume"}
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
       <div className="library__gutenberg">
         <div className="library__search">
           <input

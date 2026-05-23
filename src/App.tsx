@@ -11,6 +11,9 @@ import {
 import { getHighlightParts } from "./lib/highlight";
 import { clampWpm } from "./lib/wpm";
 import { tokenizeText } from "./lib/tokenize";
+import { wordDelayMs } from "./lib/pacing";
+import { loadHistory, upsertHistory, type HistoryEntry } from "./lib/history";
+import { loadGutenbergBook } from "./lib/gutenberg";
 import { DEFAULT_THEME } from "./data/themes";
 import { LONG_SAMPLE_CATEGORIES } from "./data/samples";
 import type { ChapterOption, SampleSource, Screen, ThemePreset, ThemeSettings } from "./types";
@@ -52,8 +55,10 @@ export default function App() {
   const [chapterOptions, setChapterOptions] = useState<ChapterOption[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("full");
   const [loadedBookTitle, setLoadedBookTitle] = useState<string | null>(null);
+  const [loadedBookSource, setLoadedBookSource] = useState<{ gutenbergId?: number; sampleId?: string } | null>(null);
   const [sampleLoadingId, setSampleLoadingId] = useState<string | null>(null);
   const [sampleError, setSampleError] = useState<string | null>(null);
+  const [readingHistory, setReadingHistory] = useState<HistoryEntry[]>(() => loadHistory());
   const [areHotkeysEnabled, setAreHotkeysEnabled] = useState(() => {
     try { return localStorage.getItem(HOTKEYS_STORAGE_KEY) !== "false"; } catch { return true; }
   });
@@ -97,23 +102,34 @@ export default function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputText]);
 
-  // Save position as reading progresses
+  // Save position as reading progresses; keep history in sync
   useEffect(() => {
     if (!inputText.trim() || readerState.currentIndex === 0) return;
     try {
       localStorage.setItem(positionKey(inputText), String(readerState.currentIndex));
     } catch { /* ignore */ }
-  }, [inputText, readerState.currentIndex]);
+    if (loadedBookTitle && tokenCount > 0) {
+      const next = upsertHistory({
+        title: loadedBookTitle,
+        wordCount: tokenCount,
+        progress: readerState.currentIndex / tokenCount,
+        lastReadAt: Date.now(),
+        ...loadedBookSource ?? {},
+      });
+      setReadingHistory(next);
+    }
+  }, [inputText, readerState.currentIndex, loadedBookTitle, tokenCount, loadedBookSource]);
 
-  // Playback interval
+  // Playback — per-word timeout so each word can have its own delay
   useEffect(() => {
     if (!readerState.isPlaying || !hasTokens) return;
-    const ms = Math.round(60000 / Math.max(wpm, 1));
-    const id = window.setInterval(() => {
+    const currentWord = tokens[readerState.currentIndex] ?? "";
+    const ms = wordDelayMs(currentWord, wpm);
+    const id = window.setTimeout(() => {
       setReaderState((prev) => stepForward(prev));
     }, ms);
-    return () => window.clearInterval(id);
-  }, [readerState.isPlaying, hasTokens, wpm]);
+    return () => window.clearTimeout(id);
+  }, [readerState.isPlaying, hasTokens, wpm, readerState.currentIndex, tokens]);
 
   // Session elapsed timer
   useEffect(() => {
@@ -176,6 +192,7 @@ export default function App() {
   const handleTextChange = (text: string) => {
     setInputText(text);
     setLoadedBookTitle(null);
+    setLoadedBookSource(null);
     if (loadedSampleText) {
       setLoadedSampleText(null);
       setChapterOptions([]);
@@ -186,19 +203,29 @@ export default function App() {
   const handleChangeText = () => {
     setInputText("");
     setLoadedBookTitle(null);
+    setLoadedBookSource(null);
     setLoadedSampleText(null);
     setChapterOptions([]);
     setSelectedChapterId("full");
   };
 
-  const handleBookLoad = (text: string, title: string) => {
+  const handleBookLoad = (text: string, title: string, source?: { gutenbergId?: number; sampleId?: string }) => {
     const chapters = extractChapters(text);
     setLoadedSampleText(text);
     setLoadedBookTitle(title);
+    setLoadedBookSource(source ?? null);
     setChapterOptions(chapters);
     setSelectedChapterId("full");
     setInputText(text);
     setSampleError(null);
+    const next = upsertHistory({
+      title,
+      wordCount: tokenizeText(text).length,
+      progress: 0,
+      lastReadAt: Date.now(),
+      ...source,
+    });
+    setReadingHistory(next);
   };
 
   const handleSampleSourceSelect = async (sample: SampleSource) => {
@@ -211,7 +238,7 @@ export default function App() {
       if (!response.ok) throw new Error("Failed to load sample.");
       const text = await response.text();
       if (!text.trim()) throw new Error("Sample was empty.");
-      handleBookLoad(text, sample.label);
+      handleBookLoad(text, sample.label, { sampleId: sample.id });
     } catch (err) {
       setSampleError(err instanceof Error ? err.message : "Load failed.");
     } finally {
@@ -253,6 +280,29 @@ export default function App() {
   const handleScrub = (index: number) => {
     setReaderState((prev) => ({ ...prev, currentIndex: index, isPlaying: false }));
   };
+
+  const handleResumeFromHistory = useCallback(async (entry: HistoryEntry) => {
+    if (entry.gutenbergId != null) {
+      setSampleLoadingId(`history:${entry.title}`);
+      setSampleError(null);
+      try {
+        const text = await loadGutenbergBook(entry.gutenbergId);
+        handleBookLoad(text, entry.title, { gutenbergId: entry.gutenbergId });
+        setScreen("reader");
+      } catch (err) {
+        setSampleError(err instanceof Error ? err.message : "Load failed.");
+      } finally {
+        setSampleLoadingId(null);
+      }
+    } else if (entry.sampleId != null) {
+      const sample = LONG_SAMPLE_CATEGORIES.flatMap((c) => c.samples).find((s) => s.id === entry.sampleId);
+      if (sample) {
+        await handleSampleSourceSelect(sample);
+        setScreen("reader");
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const progress = computeProgress(readerState.currentIndex, tokenCount);
   void progress;
@@ -315,11 +365,13 @@ export default function App() {
       ) : screen === "library" ? (
         <Library
           sampleCategories={LONG_SAMPLE_CATEGORIES}
-          onBookLoad={handleBookLoad}
+          onBookLoad={(text, title, gutenbergId) => handleBookLoad(text, title, gutenbergId != null ? { gutenbergId } : undefined)}
           onNavigateToReader={() => setScreen("reader")}
           onSampleSourceSelect={handleSampleSourceSelect}
           sampleLoadingId={sampleLoadingId}
           sampleError={sampleError}
+          readingHistory={readingHistory}
+          onResumeFromHistory={handleResumeFromHistory}
         />
       ) : (
         <Settings
