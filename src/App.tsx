@@ -171,6 +171,12 @@ export default function App() {
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
         setReaderState((prev) => stepForward(prev));
+      } else if (e.key === "+" || e.key === "=") {
+        e.preventDefault();
+        setWpm((prev) => clampWpm(prev + 25));
+      } else if (e.key === "-") {
+        e.preventDefault();
+        setWpm((prev) => clampWpm(prev - 25));
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -349,8 +355,11 @@ export default function App() {
           chapterOptions={chapterOptions}
           selectedChapterId={selectedChapterId}
           loadedBookTitle={loadedBookTitle}
+          featuredSamples={LONG_SAMPLE_CATEGORIES.flatMap((c) => c.samples).slice(0, 3)}
+          sampleLoadingId={sampleLoadingId}
           onTextChange={handleTextChange}
           onChangeText={handleChangeText}
+          onSampleSelect={handleSampleSourceSelect}
           onChapterChange={(id) => setSelectedChapterId(id)}
           onPlayToggle={handlePlayToggle}
           onBack={() => setReaderState((prev) => stepBack(prev))}

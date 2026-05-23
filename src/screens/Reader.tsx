@@ -1,10 +1,11 @@
 import type { ReaderState } from "../lib/readerState";
 import { getHighlightParts } from "../lib/highlight";
 import { MAX_WPM, MIN_WPM } from "../lib/wpm";
-import type { ChapterOption, ThemeSettings } from "../types";
+import type { ChapterOption, SampleSource, ThemeSettings } from "../types";
 import { QUICK_DEMO_TEXT } from "../data/samples";
 
 const MINUTES_DISPLAY_PRECISION = 0;
+const CONTEXT_WINDOW = 6;
 
 type Props = {
   inputText: string;
@@ -20,6 +21,8 @@ type Props = {
   chapterOptions: ChapterOption[];
   selectedChapterId: string;
   loadedBookTitle: string | null;
+  featuredSamples: SampleSource[];
+  sampleLoadingId: string | null;
   onTextChange: (text: string) => void;
   onChangeText: () => void;
   onChapterChange: (id: string) => void;
@@ -32,6 +35,7 @@ type Props = {
   onFullscreenToggle: () => void;
   onHotkeysToggle: () => void;
   onNavigateToLibrary: () => void;
+  onSampleSelect: (sample: SampleSource) => void;
 };
 
 export default function Reader({
@@ -48,6 +52,8 @@ export default function Reader({
   chapterOptions,
   selectedChapterId,
   loadedBookTitle,
+  featuredSamples,
+  sampleLoadingId,
   onTextChange,
   onChangeText,
   onChapterChange,
@@ -60,6 +66,7 @@ export default function Reader({
   onFullscreenToggle,
   onHotkeysToggle,
   onNavigateToLibrary,
+  onSampleSelect,
 }: Props) {
   const tokenCount = tokens.length;
   const hasTokens = tokenCount > 0;
@@ -86,6 +93,11 @@ export default function Reader({
     textShadow: `-1px -1px 0 ${themeSettings.highlightOutlineColor}, 1px -1px 0 ${themeSettings.highlightOutlineColor}, -1px 1px 0 ${themeSettings.highlightOutlineColor}, 1px 1px 0 ${themeSettings.highlightOutlineColor}`
   };
 
+  const contextStart = Math.max(0, currentIndex - CONTEXT_WINDOW);
+  const contextEnd = Math.min(tokenCount, currentIndex + CONTEXT_WINDOW + 1);
+  const contextTokens = tokens.slice(contextStart, contextEnd);
+  const contextCurrentIdx = currentIndex - contextStart;
+
   return (
     <div className={`screen reader${isWordFocusMode ? " reader--word-focus" : ""}`}>
       {chapterOptions.length > 0 && !isWordFocusMode ? (
@@ -106,6 +118,19 @@ export default function Reader({
         </div>
       ) : null}
 
+      {hasTokens && !isWordFocusMode ? (
+        <div className="reader__context" aria-hidden="true">
+          {contextTokens.map((token, i) => (
+            <span
+              key={contextStart + i}
+              className={i === contextCurrentIdx ? "reader__context-current" : "reader__context-word"}
+            >
+              {token}{i < contextTokens.length - 1 ? " " : ""}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
       <div className="reader__stage" data-testid="current-word">
         {hasTokens ? (
           currentWord ? (
@@ -123,11 +148,31 @@ export default function Reader({
           )
         ) : (
           <div className="reader__empty">
-            <p className="reader__empty-text">No text loaded yet.</p>
-            <button type="button" className="btn" onClick={onNavigateToLibrary}>
-              Browse Library
-            </button>
-            <p className="reader__empty-or">or paste text below ↓</p>
+            <p className="reader__empty-heading">What do you want to read?</p>
+            {featuredSamples.length > 0 ? (
+              <div className="reader__empty-featured">
+                {featuredSamples.map((sample) => (
+                  <button
+                    key={sample.id}
+                    type="button"
+                    className="reader__empty-book"
+                    onClick={() => onSampleSelect(sample)}
+                    disabled={sampleLoadingId === sample.id}
+                  >
+                    <span className="reader__empty-book-title">
+                      {sampleLoadingId === sample.id ? "Loading…" : sample.label}
+                    </span>
+                    <span className="reader__empty-book-desc">{sample.description}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="reader__empty-actions">
+              <button type="button" className="btn" onClick={onNavigateToLibrary}>
+                Browse Library
+              </button>
+              <span className="reader__empty-or">or paste text below ↓</span>
+            </div>
           </div>
         )}
       </div>
@@ -249,6 +294,8 @@ export default function Reader({
           <kbd>Space</kbd> play / pause
           <span className="reader__hotkey-sep" />
           <kbd>←</kbd> <kbd>→</kbd> step word
+          <span className="reader__hotkey-sep" />
+          <kbd>+</kbd> <kbd>−</kbd> speed
         </div>
       ) : null}
 
