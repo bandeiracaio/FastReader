@@ -324,6 +324,78 @@ body { margin: 0; }
   flex-wrap: wrap;
 }
 
+/* Reading title */
+.reader__reading-title {
+  font-size: 12px;
+  opacity: 0.45;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Hotkey hints */
+.reader__hotkey-hints {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.4;
+  flex-wrap: wrap;
+}
+
+.reader__hotkey-sep {
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: currentColor;
+  opacity: 0.4;
+  margin: 0 2px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  opacity: 0.8;
+}
+
+/* Book card */
+.reader__book-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(128, 128, 128, 0.25);
+}
+
+.reader__book-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reader__book-card-title {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reader__book-card-meta {
+  font-size: 12px;
+  opacity: 0.5;
+}
+
 /* Paste section */
 .reader__paste-section {
   margin-top: 28px;

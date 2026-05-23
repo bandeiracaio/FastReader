@@ -19,7 +19,9 @@ type Props = {
   themeSettings: ThemeSettings;
   chapterOptions: ChapterOption[];
   selectedChapterId: string;
+  loadedBookTitle: string | null;
   onTextChange: (text: string) => void;
+  onChangeText: () => void;
   onChapterChange: (id: string) => void;
   onPlayToggle: () => void;
   onBack: () => void;
@@ -45,7 +47,9 @@ export default function Reader({
   themeSettings,
   chapterOptions,
   selectedChapterId,
+  loadedBookTitle,
   onTextChange,
+  onChangeText,
   onChapterChange,
   onPlayToggle,
   onBack,
@@ -105,10 +109,7 @@ export default function Reader({
       <div className="reader__stage" data-testid="current-word">
         {hasTokens ? (
           currentWord ? (
-            <div
-              className="reader__word"
-              style={wordStyle}
-            >
+            <div className="reader__word" style={wordStyle}>
               <div className="reader__word-inner">
                 <span className="reader__word-leading">{highlightedWord.leading}</span>
                 <span className="reader__word-focus" style={focusLetterStyle}>
@@ -130,6 +131,12 @@ export default function Reader({
           </div>
         )}
       </div>
+
+      {loadedBookTitle && hasTokens ? (
+        <div className="reader__reading-title" aria-label="Currently reading">
+          {loadedBookTitle}
+        </div>
+      ) : null}
 
       <div className="reader__scrubber-row" data-testid="progress-status">
         <input
@@ -237,41 +244,71 @@ export default function Reader({
         </button>
       </div>
 
+      {areHotkeysEnabled ? (
+        <div className="reader__hotkey-hints">
+          <kbd>Space</kbd> play / pause
+          <span className="reader__hotkey-sep" />
+          <kbd>←</kbd> <kbd>→</kbd> step word
+        </div>
+      ) : null}
+
       {!isWordFocusMode ? (
         <div className="reader__paste-section">
-          <label className="reader__paste-label" htmlFor="inputText">
-            Paste text
-          </label>
-          <textarea
-            id="inputText"
-            className="reader__textarea"
-            value={inputText}
-            onChange={(e) => onTextChange(e.target.value)}
-            rows={8}
-            placeholder="Paste any text here to read it…"
-          />
-          <div className="reader__paste-meta">
-            <span>{tokenCount.toLocaleString()} words</span>
-            {inputText.trim() ? (
+          {loadedBookTitle ? (
+            <div className="reader__book-card">
+              <div className="reader__book-card-info">
+                <span className="reader__book-card-title">{loadedBookTitle}</span>
+                <span className="reader__book-card-meta">
+                  {tokenCount.toLocaleString()} words
+                  {chapterOptions.length > 0 ? ` · ${chapterOptions.length} chapters` : ""}
+                </span>
+              </div>
               <button
                 type="button"
                 className="btn btn--small"
-                onClick={() => onTextChange("")}
+                onClick={onChangeText}
                 data-testid="clear-text"
               >
-                Clear
+                Change
               </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn--small"
-                onClick={() => onTextChange(QUICK_DEMO_TEXT)}
-                data-testid="sample-quick-demo"
-              >
-                Quick demo
-              </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <>
+              <label className="reader__paste-label" htmlFor="inputText">
+                Paste text
+              </label>
+              <textarea
+                id="inputText"
+                className="reader__textarea"
+                value={inputText}
+                onChange={(e) => onTextChange(e.target.value)}
+                rows={8}
+                placeholder="Paste any text here to read it…"
+              />
+              <div className="reader__paste-meta">
+                <span>{tokenCount.toLocaleString()} words</span>
+                {inputText.trim() ? (
+                  <button
+                    type="button"
+                    className="btn btn--small"
+                    onClick={() => onTextChange("")}
+                    data-testid="clear-text"
+                  >
+                    Clear
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn--small"
+                    onClick={() => onTextChange(QUICK_DEMO_TEXT)}
+                    data-testid="sample-quick-demo"
+                  >
+                    Quick demo
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       ) : null}
     </div>

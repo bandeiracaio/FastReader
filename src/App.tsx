@@ -51,6 +51,7 @@ export default function App() {
   const [loadedSampleText, setLoadedSampleText] = useState<string | null>(null);
   const [chapterOptions, setChapterOptions] = useState<ChapterOption[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("full");
+  const [loadedBookTitle, setLoadedBookTitle] = useState<string | null>(null);
   const [sampleLoadingId, setSampleLoadingId] = useState<string | null>(null);
   const [sampleError, setSampleError] = useState<string | null>(null);
   const [areHotkeysEnabled, setAreHotkeysEnabled] = useState(() => {
@@ -174,6 +175,7 @@ export default function App() {
 
   const handleTextChange = (text: string) => {
     setInputText(text);
+    setLoadedBookTitle(null);
     if (loadedSampleText) {
       setLoadedSampleText(null);
       setChapterOptions([]);
@@ -181,9 +183,18 @@ export default function App() {
     }
   };
 
-  const handleBookLoad = (text: string) => {
+  const handleChangeText = () => {
+    setInputText("");
+    setLoadedBookTitle(null);
+    setLoadedSampleText(null);
+    setChapterOptions([]);
+    setSelectedChapterId("full");
+  };
+
+  const handleBookLoad = (text: string, title: string) => {
     const chapters = extractChapters(text);
     setLoadedSampleText(text);
+    setLoadedBookTitle(title);
     setChapterOptions(chapters);
     setSelectedChapterId("full");
     setInputText(text);
@@ -200,7 +211,7 @@ export default function App() {
       if (!response.ok) throw new Error("Failed to load sample.");
       const text = await response.text();
       if (!text.trim()) throw new Error("Sample was empty.");
-      handleBookLoad(text);
+      handleBookLoad(text, sample.label);
     } catch (err) {
       setSampleError(err instanceof Error ? err.message : "Load failed.");
     } finally {
@@ -287,7 +298,9 @@ export default function App() {
           themeSettings={themeSettings}
           chapterOptions={chapterOptions}
           selectedChapterId={selectedChapterId}
+          loadedBookTitle={loadedBookTitle}
           onTextChange={handleTextChange}
+          onChangeText={handleChangeText}
           onChapterChange={(id) => setSelectedChapterId(id)}
           onPlayToggle={handlePlayToggle}
           onBack={() => setReaderState((prev) => stepBack(prev))}
